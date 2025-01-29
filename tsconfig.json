@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "commonjs",
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "strict": true,
+        "noImplicitAny": false,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true
+    },
+    "include": [
+        "src/**/*",
+        "uploads/",
+        // "src/netlify/functions/**/*.ts"
+    ],
+    "lib": [
+        "es2015"
+    ]
+}

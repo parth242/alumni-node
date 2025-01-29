@@ -1,0 +1,64 @@
+{
+	"solidity.compileUsingRemoteVersion": "v0.8.20+commit.a1b79de6",
+	// Editor settings
+	"editor.tabSize": 4,
+	"editor.indentSize": 4,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"editor.wordWrap": "on",
+	"editor.formatOnSave": true,
+	// Files settings
+	"files.autoSave": "off",
+	"files.trimTrailingWhitespace": true,
+	"files.insertFinalNewline": true,
+	"files.associations": {
+		"*.jsx": "javascriptreact",
+		"*.tsx": "typescriptreact"
+	},
+	// Language-specific settings
+	"[javascript]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[typescript]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[json]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[html]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"[css]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	// Prettier settings
+	"prettier.singleQuote": true,
+	"prettier.trailingComma": "all",
+	"prettier.arrowParens": "avoid",
+	// ESLint settings
+	"eslint.alwaysShowStatus": true,
+	"eslint.format.enable": true,
+	"eslint.packageManager": "yarn",
+	// TypeScript settings
+	"typescript.tsdk": "node_modules/typescript/lib",
+	// Terminal settings
+	"terminal.integrated.shell.linux": "/bin/bash",
+	"terminal.integrated.shell.osx": "/bin/zsh",
+	"terminal.integrated.shell.windows": "C:\\Windows\\System32\\cmd.exe",
+	// Extensions recommendations
+	"extensions.ignoreRecommendations": false,
+	"extensions.autoUpdate": true,
+	"extensions.recommendations": [
+		"dbaeumer.vscode-eslint",
+		"esbenp.prettier-vscode",
+		"ms-vscode.vscode-typescript-tslint-plugin",
+		"eamodio.gitlens",
+		"mgmcdermott.vscode-language-babel",
+		"dsznajder.es7-react-js-snippets"
+	]
+}

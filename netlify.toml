@@ -1,0 +1,11 @@
+[functions]
+  external_node_modules = ["accepts", "serverless-http", "@netlify/functions", "array-flatten", "content-disposition", "pg-hstore"]
+  node_bundler = "esbuild"
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "dist/netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
