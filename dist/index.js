@@ -22,6 +22,8 @@ app.use((0, cors_1.default)({
         "http://localhost:3000",
         "http://localhost:3001",
         "http://localhost:3002",
+        "https://alumni-react.onrender.com",
+        
     ],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
