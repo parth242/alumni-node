@@ -11,7 +11,7 @@ try {
         username: process.env.CONFIG_DB_USERNAME || 'root',
         password: process.env.CONFIG_DB_PASSWORD || 'Alumni#123456',
         database: process.env.CONFIG_DB_NAME || 'alumni-config',
-        port: 3306, // Configuration database name
+        port: 24625, // Configuration database name
     });
 }
 catch (error) {
@@ -54,7 +54,7 @@ async function initializeSequelize(config) {
             username: config.username,
             password: config.password,
             database: config.database,
-            port: 3306,
+            port: 16101,
             pool: {
                 max: 5,
                 min: 0,
