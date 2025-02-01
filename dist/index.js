@@ -28,6 +28,11 @@ app.use((0, cors_1.default)({
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
 }));
+app.use(cors({
+    origin: 'https://alumni-react.onrender.com', // Allow only your frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
 app.use(async (req, res, next) => {
     const siteUrl = req.headers.host;
     try {
