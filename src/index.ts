@@ -20,6 +20,7 @@ app.use(
 			"http://localhost:3000",
 			"http://localhost:3001",
 			"http://localhost:3002",
+			"https://alumni-react.onrender.com",
 		], // Replace with your client app's URL
 		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 		credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
@@ -43,14 +44,14 @@ app.use(async (req, res, next) => {
     		replacements.push(siteUrl);
 		}
 
-		   const rows: InstituteSiteDetails[] = await configDb.query(query,			
+		   const rows: InstituteSiteDetails[] = await configDb.query(query,
 			{
 				replacements,
 				type: QueryTypes.SELECT,
 			},
 		);
-		
-			
+
+
 		//console.log("rowdata", rows[0]);
 
 		if (rows && rows.length > 0) {
@@ -69,7 +70,7 @@ app.use(async (req, res, next) => {
 
 			// Attach `institute_id` to `req` for immediate use
 			(req as any).instituteId = id;
-		
+
 			// Set up the site-specific database instance
 			await initializeSequelize({
 				host: site_dbhost,
@@ -77,7 +78,7 @@ app.use(async (req, res, next) => {
 				password: site_dbpassword,
 				database: site_dbname,
 			});
-			
+
 			next();
 		} else {
 			res.status(404).send("Site not found");
