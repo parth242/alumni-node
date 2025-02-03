@@ -10,6 +10,8 @@ class EmailTemplates extends Model {
     public alumni_reset_password_mail!: string;
     public new_event_mail!: string;
     public new_job_mail!: string;
+    public job_confirm_mail!: string;
+    public event_confirm_mail!: string;
     public update_job_status!: string;
     public refer_job_friend!: string;
     public update_post_status!: string;
@@ -53,6 +55,14 @@ EmailTemplates.init(
             allowNull: true,            
         },
         new_job_mail: {
+            type: DataTypes.STRING,
+            allowNull: true,            
+        },
+        job_confirm_mail: {
+            type: DataTypes.STRING,
+            allowNull: true,            
+        },
+        event_confirm_mail: {
             type: DataTypes.STRING,
             allowNull: true,            
         },

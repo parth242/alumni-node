@@ -7,8 +7,11 @@ import { auth } from '../middleware/auth';
 import { Op,WhereOptions,Sequelize } from 'sequelize';
 import Categorys, { initializeCategoryModel } from '../models/Category';
 import FeedComments, { initializeFeedCommentModel } from '../models/FeedComment';
+import FeedReport, { initializeFeedReportModel } from '../models/FeedReport';
 import EmailTemplates , { initializeEmailTemplateModel } from '../models/EmailTemplate';
 import Institutes , { initializeInstitutesModel } from '../models/Institute';
+import Notification, { initializeNotificationModel } from '../models/Notification';
+import UserGroup, { initializeUGroupModel } from '../models/UserGroup';
 import nodemailer from "nodemailer";
 
 // import CryptoJS from "crypto-js";
@@ -307,6 +310,9 @@ feedRouter.delete('/:id', auth, async (req, res) => {
 
 feedRouter.post('/create', async (req, res) => {
     initializeFeedModel(getSequelize());
+    initializeUserModel(getSequelize());
+    initializeNotificationModel(getSequelize());	
+    initializeUGroupModel(getSequelize());
     try {
         const {
             id,           
@@ -356,6 +362,41 @@ feedRouter.post('/create', async (req, res) => {
                         group_id,
                         category_id
                     });
+
+                    const user = await Users.findOne({ where: { id: user_id } });
+
+                    const usergroupnew = await UserGroup.findAll({
+                        where: {'user_id':user_id},
+                        attributes: ['group_id'],
+                        order: [['id', 'ASC']]                    
+                    });
+                
+                    const groupids = usergroupnew.map(groupid =>{
+                        return groupid.dataValues.group_id
+                    } );
+                
+                    const userIds = await UserGroup.findAll({
+                        where: {
+                            group_id: {
+                                [Op.in]: groupids
+                            },
+                            user_id: {
+                                [Op.ne]: user_id  // Exclude user_id
+                            }
+                        },
+                        attributes: ['user_id'],
+                        order: [['id', 'ASC']]                    
+                    });
+                
+                    const messagedesc = user?.first_name+" posted on dashboard Id#"+feed.id;
+
+                    const notifyurl = "view-feedback/"+feed.id;
+                    const notifydata = userIds.map(userid =>{
+                        return { sender_id: user_id, receiver_id: userid.dataValues.user_id, message_desc: messagedesc, notify_url: notifyurl};                        
+                    } );
+
+                            
+                    const notificationdata = await Notification.bulkCreate(notifydata);
                     
                     res.json({ message: "Feed Created", data: feed });
                 
@@ -390,6 +431,34 @@ feedRouter.post('/createcomment', async (req, res) => {
                 });
                     
         res.json({ message: "Feed Comment Created", data: feed });
+                
+       
+    } catch (error) {
+        res.status(500).json({ message: catchError(error) });
+    }
+});
+
+feedRouter.post('/createreport', async (req, res) => {
+    initializeFeedReportModel(getSequelize());
+    try {
+        const {
+            id,           
+            report_reason,           
+            user_id,
+            feed_id                         
+        } = req.body;
+       
+
+        let feedreport: FeedReport | null;
+                                     
+
+        const feed = await FeedReport.create({  
+                    report_reason,                 
+                    user_id,
+                    feed_id 
+                });
+                    
+        res.json({ message: "Feed Report Submitted", data: feed });
                 
        
     } catch (error) {

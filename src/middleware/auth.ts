@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
 export function auth(req: Request, res: Response, next: NextFunction) {
+console.log('ello');
     // Check for authentication, e.g., by looking for an authentication token in the request headers
     const authToken = req.cookies.token;
     if (!authToken) {
