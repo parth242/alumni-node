@@ -1,17 +1,12 @@
 import express from 'express';
 import Events, { initializeEventModel } from '../models/Event';
 import { getSequelize } from '../config/db';
+import Users from '../models/User';
 import { catchError } from '../common/functions';
 import { auth } from '../middleware/auth';
 import { Op, WhereOptions, Sequelize } from 'sequelize';
 import multer from 'multer';
 import fs from 'fs';
-import Users, { initializeUserModel } from "../models/User";
-import Institutes , { initializeInstitutesModel } from '../models/Institute';
-import EmailTemplates , { initializeEmailTemplateModel } from '../models/EmailTemplate';
-import Notification, { initializeNotificationModel } from '../models/Notification';
-import UserGroup, { initializeUGroupModel } from '../models/UserGroup';
-import nodemailer from "nodemailer";
 
 
 const storage = multer.diskStorage({
@@ -80,15 +75,6 @@ eventRouter.get('/', auth, async (req, res) => {
         
         
     }
-
-    if (req.query.hasOwnProperty('user_id')) {
-        const filteruserid = Number(req.query.user_id);
-
-    if (filteruserid > 0) {
-        const filteruserid = req.query.user_id;
-        whereCondition.user_id = filteruserid;             
-        }
-    }
    
 
     if (req.query.hasOwnProperty('filter_category')) {
@@ -97,14 +83,6 @@ eventRouter.get('/', auth, async (req, res) => {
         if (filterCategoryArray.length > 0) {
         whereCondition.event_category = { [Op.in]: filterCategoryArray };
         }
-        }
-    }
-
-    if (req.query.hasOwnProperty('filter_status')) {
-        const filterstatus = req.query.filter_status;
-
-    if (filterstatus != "") {       
-        whereCondition.status = filterstatus;             
         }
     }
    
@@ -200,7 +178,6 @@ if (!event) {
         description: event.description,
         event_image: event.event_image,
         user_id: event.user_id,
-        group_id: event.group_id,
         join_members: event.join_members,
         maybe_members: event.maybe_members,
         decline_members: event.decline_members,
@@ -274,121 +251,9 @@ eventRouter.delete('/:id', auth, async (req, res) => {
 
 });
 
-eventRouter.post("/status", auth, async (req, res) => {
-    initializeEventModel(getSequelize());
-	initializeUserModel(getSequelize());
-	initializeEmailTemplateModel(getSequelize());
-	initializeInstitutesModel(getSequelize());
-	console.log("req.params.id", req.params.id);
-	
-
-	const emailtemplate = await EmailTemplates.findOne({
-		order: [["id", "DESC"]],
-		offset: 0, // Set the offset
-		limit: 1, // Set the limit to the page size
-	});
-
-	// const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
-	
-
-	try {
-		const { id, status } = req.body;
-
-		const instituteId = (req as any).instituteId;
-
-		const event = await Events.findOne({ where: { id: id } });
-
-		
-		const institutedata = await Institutes.findOne({ where: { id: instituteId } });
-
-		console.log("institutedata",institutedata);
-
-		if (!event) {
-			res.status(500).json({ message: "Invalid Event" });
-			return;
-		}
-
-		const eventnew = await Events.update(
-			{
-				status,
-			},
-			{
-				where: { id: id },
-			},
-		);
-
-		const transporter = nodemailer.createTransport({
-			service: "gmail",
-			auth: {
-				user: process.env.EMAIL_USER,
-				pass: process.env.EMAIL_PASS,
-			},
-		});
-
-		const notFoundEmails: string[] = [];
-
-        const user = await Users.findOne({ where: { id: event.user_id } });
-
-		// Use Promise.all() to send emails in parallel
-		let subject;
-
-		if(status=='active'){
-			subject = "Your Event has been activated";
-		}
-		else{
-			subject = "Your Event has been deactivated";
-		}
-
-			if (event) {
-				try {
-
-					const dynamicValues = {
-						"[User Name]": user?.first_name+" "+user?.last_name,
-						"[subject]": subject,
-                        "[Event Id]": event.id,
-                        "[Event Title]": event.event_title,
-                        "[Status]": event.status,							
-						"[Your Company Name]": institutedata?.institute_name,
-						"[Year]": new Date().getFullYear(),
-					};
-
-					const emailTemplate = emailtemplate?.event_confirm_mail as any;
-					const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
-                               .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
-							   .replace(/\[subject\]/g, dynamicValues["[subject]"])
-                               .replace(/\[Event Id\]/g, dynamicValues["[Event Id]"])
-                               .replace(/\[Event Title\]/g, dynamicValues["[Event Title]"])
-                               .replace(/\[Status\]/g, dynamicValues["[Status]"])
-                               .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-					
-					await transporter.sendMail({
-						from: process.env.EMAIL_USER,
-						to: user?.email,
-						subject: subject,
-						html: finalHtml,
-						headers: {
-							'Content-Type': 'text/html; charset=UTF-8',
-						  },
-					});
-				} catch (err) {
-					console.error(`Failed to send email to ${user?.email}:`, err);
-				}
-			} 		
-
-		res.json({ message: "Status Updated Successfully", data: event });
-	} catch (error) {
-		res.status(500).json({ message: catchError(error) });
-	}	
-});
-
 eventRouter.post('/create', auth, async (req, res) => {
     initializeEventModel(getSequelize());
-    initializeUserModel(getSequelize());
-	initializeEmailTemplateModel(getSequelize());
-    initializeInstitutesModel(getSequelize());	
-    initializeNotificationModel(getSequelize());	
-    initializeUGroupModel(getSequelize());
-       
+   
     try {
         const {
             id,
@@ -400,16 +265,11 @@ eventRouter.post('/create', auth, async (req, res) => {
             location,
             description,            
             user_id,
-            group_id,
-            status                   
+            group_id                   
         } = req.body;
 
         const institute_id = (req as any).instituteId;
         console.log("req.body", req.body);
-
-        const institutedata = await Institutes.findOne({ where: { id: institute_id } });
-
-        const user = await Users.findOne({ where: { id: user_id } });
 
         let event: Events | null;
         
@@ -426,8 +286,7 @@ eventRouter.post('/create', auth, async (req, res) => {
                     description,
                     event_image,
                     user_id,
-                    group_id,
-                    status                
+                    group_id                
                 },
                 {
                     where: { id: id }
@@ -452,105 +311,8 @@ eventRouter.post('/create', auth, async (req, res) => {
                         description,
                         event_image,
                         user_id,
-                        group_id,
-                        status
+                        group_id
                     });
-
-                    const usergroupnew = await UserGroup.findAll({
-                        where: {'user_id':user_id},
-                        attributes: ['group_id'],
-                        order: [['id', 'ASC']]                    
-                    });
-                
-                    const groupids = usergroupnew.map(groupid =>{
-                        return groupid.dataValues.group_id
-                    } );
-                
-                    const userIds = await UserGroup.findAll({
-                        where: {
-                            group_id: {
-                                [Op.in]: groupids
-                            },
-                            user_id: {
-                                [Op.ne]: user_id  // Exclude user_id
-                            }
-                        },
-                        attributes: ['user_id'],
-                        order: [['id', 'ASC']]                    
-                    });
-                
-                    const messagedesc = user?.first_name+" added new Event Id#"+event.id;
-
-                    const notifyurl = "events/"+event.id;
-                    const notifydata = userIds.map(userid =>{
-                        return { sender_id: user_id, receiver_id: userid.dataValues.user_id, message_desc: messagedesc, notify_url: notifyurl};                        
-                    } );
-
-                            
-                    const notificationdata = await Notification.bulkCreate(notifydata);
-
-                    const emailtemplate = await EmailTemplates.findOne({
-                        order: [["id", "DESC"]],
-                        offset: 0, // Set the offset
-                        limit: 1, // Set the limit to the page size
-                    });
-
-                    const adminuser = await Users.findOne({ where: { is_admin: 1, status: "active", institute_id: institute_id } });
-
-                    const transporter = nodemailer.createTransport({
-						service: "gmail",
-						auth: {
-							user: process.env.EMAIL_USER,
-							pass: process.env.EMAIL_PASS,
-						},
-					});
-			
-					const notFoundEmails: string[] = [];
-			
-					// Use Promise.all() to send emails in parallel
-					
-					let subjectAdmin;
-
-					subjectAdmin = "New Event Added";
-			
-						
-							try {
-			
-								const dynamicValues = {
-									"[User Name]": user?.first_name+" "+user?.last_name,											
-									"[Your Company Name]": institutedata?.institute_name,
-									"[Year]": new Date().getFullYear(),
-									"[Event Title]": event_title,
-									"[Category]": event_category,
-									"[Location]": location,
-									"[Event Id]": event.id,
-                                    "[Event Date]": event_date,                                  
-								};
-			
-								
-								const emailAdminTemplate = emailtemplate?.new_event_mail as any;
-								const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
-													  .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
-													  .replace(/\[Event Title\]/g, dynamicValues["[Event Title]"])
-													  .replace(/\[Category\]/g, dynamicValues["[Category]"])	
-													  .replace(/\[Location\]/g, dynamicValues["[Location]"])	
-													  .replace(/\[Event Id\]/g, dynamicValues["[Event Id]"])
-                                                      .replace(/\[Event Date\]/g, dynamicValues["[Event Date]"])											  
-													  .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-								
-								
-								await transporter.sendMail({
-									from: process.env.EMAIL_USER,
-									to: adminuser?.email,
-									subject: subjectAdmin,
-									html: finalAdminHtml,
-									headers: {
-										'Content-Type': 'text/html; charset=UTF-8',
-									  },
-								});
-							} catch (err) {
-								console.error(`Failed to send email to ${adminuser?.email}:`, err);
-							}
                     
                     res.json({ message: "Event Created", data: event });
                 

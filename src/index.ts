@@ -20,6 +20,7 @@ app.use(
 			"http://localhost:3000",
 			"http://localhost:3001",
 			"http://localhost:3002",
+			"https://alumni-react.onrender.com",
 		], // Replace with your client app's URL
 		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 		credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
@@ -43,14 +44,14 @@ app.use(async (req, res, next) => {
     		replacements.push(siteUrl);
 		}
 
-		   const rows: InstituteSiteDetails[] = await configDb.query(query,			
+		   const rows: InstituteSiteDetails[] = await configDb.query(query,
 			{
 				replacements,
 				type: QueryTypes.SELECT,
 			},
 		);
-		
-			
+
+
 		//console.log("rowdata", rows[0]);
 
 		if (rows && rows.length > 0) {
@@ -69,7 +70,7 @@ app.use(async (req, res, next) => {
 
 			// Attach `institute_id` to `req` for immediate use
 			(req as any).instituteId = id;
-		
+
 			// Set up the site-specific database instance
 			await initializeSequelize({
 				host: site_dbhost,
@@ -77,7 +78,7 @@ app.use(async (req, res, next) => {
 				password: site_dbpassword,
 				database: site_dbname,
 			});
-			
+
 			next();
 		} else {
 			res.status(404).send("Site not found");
@@ -152,8 +153,6 @@ import jobSkillsRouter from "./routes/skills.route";
 import jobApplicationsRouter from "./routes/jobApplications.route";
 import emailtemplateRouter from "./routes/emailtemplate.route";
 import instituteRouter from "./routes/institute.route";
-import notificationRouter from "./routes/notification.route";
-import alumnimessageRouter from "./routes/alumnimessage.route";
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -211,8 +210,6 @@ app.use("/api/v1/group", groupRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/emailtemplate", emailtemplateRouter);
 app.use("/api/v1/institute", instituteRouter);
-app.use("/api/v1/notification", notificationRouter);
-app.use("/api/v1/alumnimessage", alumnimessageRouter);
 
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {

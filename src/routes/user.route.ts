@@ -1583,9 +1583,9 @@ userRouter.post("/alumnisendmessage", auth, async (req, res) => {
 		const { id, subject, message_desc, sender_id, receiver_id, status } =
 			req.body;
 
-		const institute_id = (req as any).instituteId;
+		const instituteId = (req as any).instituteId;
 		const alumnimessage = await AlumniMessage.create({
-			institute_id,
+			instituteId,
 			subject,
 			message_desc,
 			sender_id,
