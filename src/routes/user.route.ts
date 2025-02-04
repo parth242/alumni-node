@@ -983,7 +983,7 @@ userRouter.get("/:id", auth, async (req, res) => {
 	});
 });
 
-userRouter.post("/logintest", async (req, res) => {
+userRouter.post("/login", async (req, res) => {
 	initializeUserModel(getSequelize());
 
 	const { email, password } = req.body;
