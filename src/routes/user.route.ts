@@ -1039,7 +1039,7 @@ userRouter.post("/login", async (req, res) => {
 		const serialized = serialize("token", token, {
 			httpOnly: false,
 			secure: process.env.NODE_ENV === "production",
-			sameSite: "",
+			sameSite: "none",
 			maxAge: 60 * 60,
 			path: "/",
 		});
