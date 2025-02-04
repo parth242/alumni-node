@@ -168,6 +168,7 @@ app.use("/upload", express.static(__dirname + "/uploads")); //Todo Serve content
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use(async (req, res, next) => {
+	console.log("in am inside middleware");
 	// Retrieve site-specific database details and `institute_id`
 	(req as any).instituteId =
 		req.cookies.institute_id || (req as any).instituteId; // Fallback to the middleware-set value
