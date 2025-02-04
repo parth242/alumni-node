@@ -1045,6 +1045,7 @@ userRouter.post("/login", async (req, res) => {
 		});
 		res.setHeader("Set-Cookie", serialized);
 
+
 		res.json({ message: "LOGIN SUCCESS", user: userinstitute });
 	} else {
 		// res.send({ success: false, message: "Email and password does not match" })
