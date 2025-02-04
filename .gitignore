@@ -1,0 +1,54 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/cron/node_modules
+/config/keys/jwtPublic.key
+/config/keys/jwtPrivate.key
+# /public/contracts
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+.env*.development
+.env*.production
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+keys.json
+
+.env.prod
+
+/contracts
+/public/contracts
+/public/pdf
+proj-start.sh
+pnpm-lock.yaml
+
+.history
