@@ -985,7 +985,7 @@ userRouter.get("/:id", auth, async (req, res) => {
 
 userRouter.post("/login", async (req, res) => {
 	initializeUserModel(getSequelize());
-	console.log("req", req.body);
+
 	const { email, password } = req.body;
 
 	const user = await Users.findOne({ where: { email: email} });
@@ -1036,7 +1036,15 @@ userRouter.post("/login", async (req, res) => {
 		const token = jwt.sign(userId, process.env.JWT_KEY || "", {
 			expiresIn: "24h",
 		});
-
+		const serialized = serialize("token", token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === "production",
+			sameSite: "none",
+			maxAge: 60 * 60,
+			path: "/",
+		});
+		console.log("cookie", serialized);
+		res.setHeader("Set-Cookie", serialized);
 
 
 		res.json({ message: "LOGIN SUCCESS", user: userinstitute });
