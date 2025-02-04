@@ -1031,29 +1031,7 @@ userRouter.post("/login", async (req, res) => {
 
 	console.log("password, user.password", password, userinstitute.password);
 	const comparision = await bcrypt.compare(password, userinstitute.password);
-	if (comparision) {
-		const userId = { id: userinstitute.id, email: userinstitute.email };
-		const token = jwt.sign(userId, process.env.JWT_KEY || "", {
-			expiresIn: "24h",
-		});
-		const serialized = serialize("token", token, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "none",
-			maxAge: 60 * 60,
-			path: "/",
-		});
-		console.log("cookie", serialized);
-		res.setHeader("Set-Cookie", serialized);
 
-
-		res.json({ message: "LOGIN SUCCESS", user: userinstitute });
-	} else {
-		// res.send({ success: false, message: "Email and password does not match" })
-		return res.status(401).json({
-			message: "you_ve_entered_an_incorrect_email_password",
-		});
-	}
 
 	// res.send('Hello, World!');
 });
