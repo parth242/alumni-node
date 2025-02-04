@@ -1036,14 +1036,7 @@ userRouter.post("/login", async (req, res) => {
 		const token = jwt.sign(userId, process.env.JWT_KEY || "", {
 			expiresIn: "24h",
 		});
-		const serialized = serialize("token", token, {
-			httpOnly: false,
-			secure: true,
-			sameSite: "none",
-			maxAge: 60 * 60,
-			path: "/",
-		});
-		res.setHeader("Set-Cookie", serialized);
+
 
 
 		res.json({ message: "LOGIN SUCCESS", user: userinstitute });
