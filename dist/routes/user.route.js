@@ -503,7 +503,7 @@ userRouter.post('/login', async (req, res) => {
         const serialized = (0, cookie_1.serialize)('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'none',
             maxAge: 60 * 60,
             path: '/',
         });
