@@ -1665,7 +1665,7 @@ userRouter.post("/create", async (req, res) => {
 		console.log("req.body", req.body);
 		const institute_id = (req as any).instituteId;
 
-		institute_id = 2;
+		console.log("institute_id",institute_id);
 		const institutedata = await Institutes.findOne({ where: { id: institute_id } });
 
 
