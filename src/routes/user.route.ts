@@ -1038,13 +1038,22 @@ userRouter.post("/login", async (req, res) => {
 		});
 		const serialized = serialize("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
+			secure: true,
+			sameSite: "none",
+			maxAge: 60 * 60,
+			path: "/",
+		});
+		const instituteId = '2';
+		const instituteCookie = serialize("instituteId", instituteId, {
+			httpOnly: true,
+			secure: true,
 			sameSite: "none",
 			maxAge: 60 * 60,
 			path: "/",
 		});
 		console.log("cookie", serialized);
-		res.setHeader("Set-Cookie", serialized);
+		res.setHeader("Set-Cookie", [serialized, instituteCookie]);
+
 
 
 		res.json({ message: "LOGIN SUCCESS", user: userinstitute });

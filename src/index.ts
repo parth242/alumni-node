@@ -36,9 +36,9 @@ app.use(async (req, res, next) => {
 		let query = "SELECT * FROM institute_sitedetails WHERE ";
 		let replacements: any[] = [];
 
-		if(req.cookies.institute_id){
+		if(req.cookies.instituteId){
 			query += "id = ?";
-    		replacements.push(req.cookies.institute_id);
+    		replacements.push(req.cookies.instituteId);
 		}  else{
 			query += "institute_siteurl = ?";
     		replacements.push(siteUrl);
@@ -167,14 +167,14 @@ app.use("/upload", express.static(__dirname + "/uploads")); //Todo Serve content
 // Serve the Swagger documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(async (req, res, next) => {
+/*app.use(async (req, res, next) => {
 	console.log("in am inside middleware");
 	// Retrieve site-specific database details and `institute_id`
 	(req as any).instituteId =
 		req.cookies.institute_id || (req as any).instituteId; // Fallback to the middleware-set value
 	// Continue with the middleware logic
 	next();
-});
+});*/
 
 app.get("/", (req, res) => {
 	res.send("Welcome to Alumni");
