@@ -1768,7 +1768,7 @@ userRouter.post("/create", async (req, res) => {
 						youtube_url,
 						status,
 						about_me,
-						institute_id,
+						institute_id
 					});
 
 
