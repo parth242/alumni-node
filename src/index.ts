@@ -65,7 +65,11 @@ app.use(async (req, res, next) => {
 			} = rows[0];
 
 			// Store `institute_id` in a cookie (for future requests)
-			res.cookie("institute_id", id);
+			res.cookie("institute_id", id, {				
+				httpOnly: true,
+				secure: true,
+				sameSite: 'none'  // Adjust based on your requirements
+			});
 			res.cookie("institute_name", institute_name);
 
 			// Attach `institute_id` to `req` for immediate use
@@ -167,14 +171,14 @@ app.use("/upload", express.static(__dirname + "/uploads")); //Todo Serve content
 // Serve the Swagger documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-/*app.use(async (req, res, next) => {
+app.use(async (req, res, next) => {
 	console.log("in am inside middleware");
 	// Retrieve site-specific database details and `institute_id`
 	(req as any).instituteId =
 		req.cookies.institute_id || (req as any).instituteId; // Fallback to the middleware-set value
 	// Continue with the middleware logic
 	next();
-});*/
+});
 
 app.get("/", (req, res) => {
 	res.send("Welcome to Alumni");
