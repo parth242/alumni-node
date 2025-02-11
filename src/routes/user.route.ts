@@ -1743,10 +1743,9 @@ userRouter.post("/create", async (req, res) => {
 					// const password = new_item.password;
 					// const saltRounds = 10;
 					// new_item.password = await bcrypt.hash(password, saltRounds)
-					const institute_id = (req as any).instituteId;
+					const institute_id = institutedata?.id;
 
 					const user = await Users.create({
-						institute_id,
 						email,
 						password: hash,
 						first_name,
@@ -1769,6 +1768,7 @@ userRouter.post("/create", async (req, res) => {
 						youtube_url,
 						status,
 						about_me,
+						institute_id,
 					});
 
 
