@@ -1743,6 +1743,7 @@ userRouter.post("/create", async (req, res) => {
 					// const password = new_item.password;
 					// const saltRounds = 10;
 					// new_item.password = await bcrypt.hash(password, saltRounds)
+					const institute_id = (req as any).instituteId;
 
 					const user = await Users.create({
 						institute_id,
