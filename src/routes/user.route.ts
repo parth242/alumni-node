@@ -1734,16 +1734,11 @@ userRouter.post("/create", async (req, res) => {
 			);
 			res.json({ message: "User Updated", data: user });
 		} else {
-			bcrypt.hash(password, 10, async (err, hash) => {
-				if (err) {
-					return res.status(500).json({
-						message: err,
-					});
-				} else {
-					// const password = new_item.password;
-					// const saltRounds = 10;
-					// new_item.password = await bcrypt.hash(password, saltRounds)
-					const institute_id = 2;
+			try {
+				// Use await for bcrypt hashing to make it consistent with async/await
+				const hash = await bcrypt.hash(password, 10);
+				
+				const institute_id = 2; 
 
 					const user = await Users.create({
 						email,
@@ -1931,8 +1926,11 @@ userRouter.post("/create", async (req, res) => {
 
 					res.json({ message: "User Created", data: user });
 				}
-			});
-		}
+				catch (error) {
+					res.status(500).json({ message: catchError(error) });
+				}
+			}
+		
 	} catch (error) {
 		res.status(500).json({ message: catchError(error) });
 	}
