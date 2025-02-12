@@ -78,13 +78,14 @@ workroleRouter.post('/create', async (req, res) => {
             status                    
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let workrole: WorkRoles | null;
         if (id) {
-            workrole = await WorkRoles.findOne({ where: { workrole_name: workrole_name, id: { $not: id } } });
+            workrole = await WorkRoles.findOne({ where: { workrole_name: workrole_name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", workrole);
         } else {
-            workrole = await WorkRoles.findOne({ where: { workrole_name: workrole_name } });
+            workrole = await WorkRoles.findOne({ where: { workrole_name: workrole_name, institute_id: institute_id } });
         }
         if (workrole) {
             res.status(500).json({ message: "WorkRole already exist." });
@@ -106,6 +107,7 @@ workroleRouter.post('/create', async (req, res) => {
                                
 
                     const workrole = await WorkRoles.create({
+                        institute_id,
                         workrole_name,
                         status
                     });

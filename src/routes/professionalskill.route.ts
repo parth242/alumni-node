@@ -138,13 +138,14 @@ professionalskillRouter.post('/create', async (req, res) => {
             status                    
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let professionalskill: Professionalskills | null;
         if (id) {
-            professionalskill = await Professionalskills.findOne({ where: { skill_name: skill_name, id: { $not: id } } });
+            professionalskill = await Professionalskills.findOne({ where: { skill_name: skill_name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", professionalskill);
         } else {
-            professionalskill = await Professionalskills.findOne({ where: { skill_name: skill_name } });
+            professionalskill = await Professionalskills.findOne({ where: { skill_name: skill_name, institute_id: institute_id } });
         }
         if (professionalskill) {
             res.status(500).json({ message: "Professionalskill already exist." });
@@ -166,6 +167,7 @@ professionalskillRouter.post('/create', async (req, res) => {
                                
 
                     const professionalskill = await Professionalskills.create({
+                        institute_id,
                         skill_name,
                         status
                     });

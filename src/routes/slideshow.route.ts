@@ -161,13 +161,14 @@ slideshowRouter.post('/create', async (req, res) => {
             status                     
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let slideshow: Slideshows | null;
         if (id) {
-            slideshow = await Slideshows.findOne({ where: { slide_title: slide_title, id: { $not: id } } });
+            slideshow = await Slideshows.findOne({ where: { slide_title: slide_title, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", slideshow);
         } else {
-            slideshow = await Slideshows.findOne({ where: { slide_title: slide_title } });
+            slideshow = await Slideshows.findOne({ where: { slide_title: slide_title, institute_id: institute_id } });
         }
         if (slideshow) {
             res.status(500).json({ message: "Slideshow already exist." });
@@ -190,6 +191,7 @@ slideshowRouter.post('/create', async (req, res) => {
                                
 
                     const slideshow = await Slideshows.create({
+                        institute_id,
                         slide_title,
                         slide_image,
                         status

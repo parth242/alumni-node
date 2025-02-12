@@ -78,13 +78,14 @@ industryRouter.post('/create', async (req, res) => {
             status                     
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let industry: Industries | null;
         if (id) {
-            industry = await Industries.findOne({ where: { industry_name: industry_name, id: { $not: id } } });
+            industry = await Industries.findOne({ where: { industry_name: industry_name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", industry);
         } else {
-            industry = await Industries.findOne({ where: { industry_name: industry_name } });
+            industry = await Industries.findOne({ where: { industry_name: industry_name, institute_id: institute_id } });
         }
         if (industry) {
             res.status(500).json({ message: "Industry already exist." });
@@ -106,6 +107,7 @@ industryRouter.post('/create', async (req, res) => {
                                
 
                     const industry = await Industries.create({
+                        institute_id,
                         industry_name,
                         status
                     });

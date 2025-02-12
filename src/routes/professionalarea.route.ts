@@ -75,13 +75,14 @@ professionalareaRouter.post('/create', async (req, res) => {
             status                    
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let professionalarea: Professionalareas | null;
         if (id) {
-            professionalarea = await Professionalareas.findOne({ where: { area_name: area_name, id: { $not: id } } });
+            professionalarea = await Professionalareas.findOne({ where: { area_name: area_name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", professionalarea);
         } else {
-            professionalarea = await Professionalareas.findOne({ where: { area_name: area_name } });
+            professionalarea = await Professionalareas.findOne({ where: { area_name: area_name, institute_id: institute_id } });
         }
         if (professionalarea) {
             res.status(500).json({ message: "Professionalarea already exist." });
@@ -103,6 +104,7 @@ professionalareaRouter.post('/create', async (req, res) => {
                                
 
                     const professionalarea = await Professionalareas.create({
+                        institute_id,
                         area_name,
                         status
                     });
