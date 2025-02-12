@@ -137,8 +137,10 @@ professionalskillRouter.post('/create', async (req, res) => {
             skill_name,
             status                    
         } = req.body;
-        console.log("req.body", req.body);
         const institute_id = (req as any).instituteId;
+        console.log("req.body", req.body);
+        console.log("institute_id", institute_id);
+        
 
         let professionalskill: Professionalskills | null;
         if (id) {
