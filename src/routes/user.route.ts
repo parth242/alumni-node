@@ -824,6 +824,7 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 });
 
 userRouter.get("/me", auth, async (req, res) => {
+	console.log("parth testing", req.body.sessionUser.id);
 	initializeUserModel(getSequelize());
 	const instituteId = (req as any).instituteId;
 
@@ -1737,8 +1738,8 @@ userRouter.post("/create", async (req, res) => {
 			try {
 				// Use await for bcrypt hashing to make it consistent with async/await
 				const hash = await bcrypt.hash(password, 10);
-				
-				const institute_id = 2; 
+
+				const institute_id = 2;
 
 					const user = await Users.create({
 						email,
@@ -1930,7 +1931,7 @@ userRouter.post("/create", async (req, res) => {
 					res.status(500).json({ message: catchError(error) });
 				}
 			}
-		
+
 	} catch (error) {
 		res.status(500).json({ message: catchError(error) });
 	}
