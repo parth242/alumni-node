@@ -31,7 +31,7 @@ app.use(async (req, res, next) => {
 	const siteUrl = req.headers.host;
 
 	try {
-		console.log("fetching host url", siteUrl);
+
 
 		let query = "SELECT * FROM institute_sitedetails WHERE ";
 		let replacements: any[] = [];
@@ -65,7 +65,7 @@ app.use(async (req, res, next) => {
 			} = rows[0];
 
 			// Store `institute_id` in a cookie (for future requests)
-			res.cookie("institute_id", id, {				
+			res.cookie("institute_id", id, {
 				httpOnly: true,
 				secure: true,
 				sameSite: 'none'  // Adjust based on your requirements
@@ -161,11 +161,7 @@ import instituteRouter from "./routes/institute.route";
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-console.log(
-	"express.static(__dirname + '/uploads')",
-	__dirname,
-	express.static(__dirname + "/uploads"),
-);
+
 app.use("/upload", express.static(__dirname + "/uploads")); //Todo Serve content files
 
 // Serve the Swagger documentation
