@@ -30,7 +30,6 @@ app.use((0, cors_1.default)({
 app.use(async (req, res, next) => {
     const siteUrl = req.headers.host;
     try {
-        console.log("fetching host url", siteUrl);
         let query = "SELECT * FROM institute_sitedetails WHERE ";
         let replacements = [];
         if (req.cookies.instituteId) {
@@ -54,7 +53,11 @@ app.use(async (req, res, next) => {
                 secure: true,
                 sameSite: 'none' // Adjust based on your requirements
             });
-            res.cookie("institute_name", institute_name);
+            res.cookie("institute_name", institute_name, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none' // Adjust based on your requirements
+            });
             // Attach `institute_id` to `req` for immediate use
             req.instituteId = id;
             // Set up the site-specific database instance
@@ -137,7 +140,6 @@ const emailtemplate_route_1 = __importDefault(require("./routes/emailtemplate.ro
 const institute_route_1 = __importDefault(require("./routes/institute.route"));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
-console.log("express.static(__dirname + '/uploads')", __dirname, express_1.default.static(__dirname + "/uploads"));
 app.use("/upload", express_1.default.static(__dirname + "/uploads")); //Todo Serve content files
 // Serve the Swagger documentation
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));

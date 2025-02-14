@@ -725,6 +725,7 @@ userRouter.get("/event_id=:event_id/", auth_1.auth, async (req, res) => {
     res.status(200).json({ maybeMembers: maybeformattedUsers, joinMembers: formattedUsers });
 });
 userRouter.get("/me", auth_1.auth, async (req, res) => {
+    console.log("i am in me fucntion", req.body.sessionUser);
     (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
     const instituteId = req.instituteId;
     const user = await User_1.default.findOne({
@@ -903,7 +904,7 @@ userRouter.post("/login", async (req, res) => {
         const serialized = (0, cookie_1.serialize)("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "strict",
+            sameSite: "none",
             maxAge: 60 * 60,
             path: "/",
         });
