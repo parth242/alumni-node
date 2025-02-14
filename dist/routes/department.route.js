@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,14 +41,27 @@ const Department_1 = __importStar(require("../models/Department"));
 const db_1 = require("../config/db");
 const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
+const Course_1 = __importStar(require("../models/Course"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const departmentRouter = express_1.default.Router();
 departmentRouter.get('/', async (req, res) => {
     (0, Department_1.initializeDepartmentModel)((0, db_1.getSequelize)());
+    (0, Course_1.initializeCourseModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
     const instituteId = req.instituteId;
-    const department = await Department_1.default.findAll({ where: { institute_id: instituteId } });
+    Course_1.default.hasMany(Department_1.default, { foreignKey: "course_id" });
+    Department_1.default.belongsTo(Course_1.default, { foreignKey: "course_id", targetKey: "id" });
+    const department = await Department_1.default.findAll({
+        include: [
+            {
+                model: Course_1.default,
+                required: true,
+                attributes: ["course_name", "course_shortcode"],
+            },
+        ],
+        where: { institute_id: instituteId }
+    });
     res.status(200).json({ total_records: 10, data: department });
 });
 departmentRouter.get('/:id', auth_1.auth, async (req, res) => {
@@ -138,7 +161,7 @@ departmentRouter.get('/status/:id', auth_1.auth, async (req, res) => {
 departmentRouter.post('/create', async (req, res) => {
     (0, Department_1.initializeDepartmentModel)((0, db_1.getSequelize)());
     try {
-        const { id, department_name, status } = req.body;
+        const { id, department_name, department_shortcode, course_id, status } = req.body;
         console.log("req.body", req.body);
         const institute_id = req.instituteId;
         let department;
@@ -156,6 +179,8 @@ departmentRouter.post('/create', async (req, res) => {
         if (id) {
             const department = await Department_1.default.update({
                 department_name,
+                department_shortcode,
+                course_id,
                 status
             }, {
                 where: { id: id }
@@ -164,9 +189,11 @@ departmentRouter.post('/create', async (req, res) => {
         }
         else {
             const department = await Department_1.default.create({
+                institute_id,
                 department_name,
-                status,
-                institute_id
+                department_shortcode,
+                course_id,
+                status
             });
             res.json({ message: "Department Created", data: department });
         }

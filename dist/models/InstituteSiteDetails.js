@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeInstituteSiteDetailsModel = void 0;
+exports.initializeInstituteSiteDetailsModel = initializeInstituteSiteDetailsModel;
 const sequelize_1 = require("sequelize");
 class InstituteSiteDetails extends sequelize_1.Model {
 }
@@ -59,6 +59,5 @@ function initializeInstituteSiteDetailsModel(sequelize) {
         isInstituteSiteDetailsModelInitialized = true;
     }
 }
-exports.initializeInstituteSiteDetailsModel = initializeInstituteSiteDetailsModel;
 exports.default = InstituteSiteDetails;
 //# sourceMappingURL=InstituteSiteDetails.js.map

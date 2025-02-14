@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.auth = void 0;
+exports.auth = auth;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 function auth(req, res, next) {
     // Check for authentication, e.g., by looking for an authentication token in the request headers
@@ -12,6 +12,9 @@ function auth(req, res, next) {
         res.status(401).json({ message: 'Unauthorized' });
         return true;
     }
+    console.log("req.cookies", req.cookies);
+    req.institute_id =
+        req.cookies.instituteId || req.instituteId;
     const token = authToken;
     try {
         // const decoded = jwt.verify(token, process.env.JWT_KEY);
@@ -38,5 +41,4 @@ function auth(req, res, next) {
         });
     }
 }
-exports.auth = auth;
 //# sourceMappingURL=auth.js.map

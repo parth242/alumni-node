@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeJobModel = void 0;
+exports.initializeJobModel = initializeJobModel;
 const sequelize_1 = require("sequelize");
 class Jobs extends sequelize_1.Model {
 }
@@ -14,6 +14,10 @@ function initializeJobModel(sequelize) {
                 primaryKey: true,
             },
             institute_id: {
+                type: sequelize_1.DataTypes.INTEGER,
+                allowNull: false,
+            },
+            is_internship: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
             },
@@ -59,6 +63,10 @@ function initializeJobModel(sequelize) {
             experience_to: {
                 type: sequelize_1.DataTypes.INTEGER,
             },
+            duration: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: false,
+            },
             salary_package: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
@@ -87,6 +95,5 @@ function initializeJobModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeJobModel = initializeJobModel;
 exports.default = Jobs;
 //# sourceMappingURL=Job.js.map

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeCategoryModel = void 0;
+exports.initializeCategoryModel = initializeCategoryModel;
 const sequelize_1 = require("sequelize");
 class Categorys extends sequelize_1.Model {
 }
@@ -41,6 +41,5 @@ function initializeCategoryModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeCategoryModel = initializeCategoryModel;
 exports.default = Categorys;
 //# sourceMappingURL=Category.js.map

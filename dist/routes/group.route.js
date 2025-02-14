@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -42,7 +52,7 @@ groupRouter.get('/', auth_1.auth, async (req, res) => {
     Group_1.default.hasMany(UserGroup_1.default, { foreignKey: 'group_id' });
     UserGroup_1.default.belongsTo(Group_1.default, { foreignKey: 'group_id', targetKey: 'id' });
     let whereCondition = {};
-    if (req.query.hasOwnProperty('filter_user')) {
+    if (req.query.hasOwnProperty('user_id')) {
         whereCondition.user_id = req.query.user_id;
     }
     const usergroup = await UserGroup_1.default.findAll({
@@ -58,9 +68,10 @@ groupRouter.get('/', auth_1.auth, async (req, res) => {
     res.status(200).json({ total_records: 10, data: usergroup });
 });
 groupRouter.get('/:id', auth_1.auth, async (req, res) => {
-    (0, UserGroup_1.initializeUGroupModel)((0, db_1.getSequelize)());
+    (0, Group_1.initializeGroupModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const group = await UserGroup_1.default.findOne({ where: { id: req.params.id } });
+    const institute_id = req.instituteId;
+    const group = await Group_1.default.findOne({ where: { id: req.params.id } });
     const groupDetails = JSON.parse(JSON.stringify(group));
     // Second method to get data
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);

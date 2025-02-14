@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeDeleteModel = void 0;
+exports.initializeDeleteModel = initializeDeleteModel;
 const sequelize_1 = require("sequelize");
 class AccountDeleteRequest extends sequelize_1.Model {
 }
@@ -45,6 +45,5 @@ function initializeDeleteModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeDeleteModel = initializeDeleteModel;
 exports.default = AccountDeleteRequest;
 //# sourceMappingURL=AccountDeleteRequest.js.map

@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -31,24 +41,37 @@ const Company_1 = __importStar(require("../models/Company"));
 const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
 const db_1 = require("../config/db");
-const User_1 = __importDefault(require("../models/User"));
-const UserIndustry_1 = __importDefault(require("../models/UserIndustry"));
-const UserProfessionalskill_1 = __importDefault(require("../models/UserProfessionalskill"));
-const UserWorkRole_1 = __importDefault(require("../models/UserWorkRole"));
-const Industry_1 = __importDefault(require("../models/Industry"));
-const WorkRole_1 = __importDefault(require("../models/WorkRole"));
-const Professionalskill_1 = __importDefault(require("../models/Professionalskill"));
+const User_1 = __importStar(require("../models/User"));
+const UserIndustry_1 = __importStar(require("../models/UserIndustry"));
+const UserProfessionalskill_1 = __importStar(require("../models/UserProfessionalskill"));
+const UserWorkRole_1 = __importStar(require("../models/UserWorkRole"));
+const Industry_1 = __importStar(require("../models/Industry"));
+const WorkRole_1 = __importStar(require("../models/WorkRole"));
+const Professionalskill_1 = __importStar(require("../models/Professionalskill"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const companyRouter = express_1.default.Router();
 companyRouter.get('/', async (req, res) => {
     (0, Company_1.initializeCompanyModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const company = await Company_1.default.findAll();
+    let filterwhere;
+    if (req.query.hasOwnProperty("filter_user")) {
+        filterwhere = {
+            ...filterwhere,
+            user_id: req.query.filter_user,
+        };
+    }
+    const company = await Company_1.default.findAll({ where: filterwhere });
     res.status(200).json({ total_records: 10, data: company });
 });
 companyRouter.get('/experience/:id', auth_1.auth, async (req, res) => {
-    (0, Company_1.initializeCompanyModel)((0, db_1.getSequelize)());
+    (0, Industry_1.initializeIndustryModel)((0, db_1.getSequelize)());
+    (0, UserIndustry_1.initializeUIndustryModel)((0, db_1.getSequelize)());
+    (0, WorkRole_1.initializeWorkModel)((0, db_1.getSequelize)());
+    (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
+    (0, UserWorkRole_1.initializeUWorkModel)((0, db_1.getSequelize)());
+    (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
+    (0, UserProfessionalskill_1.initializeUSkillModel)((0, db_1.getSequelize)());
     const user = await User_1.default.findOne({ where: { id: req.params.id } });
     const userDetails = JSON.parse(JSON.stringify(user));
     Industry_1.default.hasMany(UserIndustry_1.default, { foreignKey: 'industry_id' });
@@ -63,7 +86,7 @@ companyRouter.get('/experience/:id', auth_1.auth, async (req, res) => {
     }
     let userexperience = {
         total_experience: userDetails.total_experience,
-        skill_id: [],
+        skill_id: [], // Initialize as empty arrays or with default values if needed
         skill_name: '',
         industry_id: [],
         industry_name: '',
@@ -77,7 +100,7 @@ companyRouter.get('/experience/:id', auth_1.auth, async (req, res) => {
                 attributes: ['industry_name']
             }
         ],
-        where: { user_id: req.body.sessionUser.id },
+        where: { user_id: req.params.id },
         attributes: ['industry_id']
     });
     if (!userindustryall) {

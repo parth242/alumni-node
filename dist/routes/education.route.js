@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -33,8 +43,9 @@ const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
 const Department_1 = __importStar(require("../models/Department"));
 const Course_1 = __importStar(require("../models/Course"));
-const Group_1 = __importDefault(require("../models/Group"));
-const UserGroup_1 = __importDefault(require("../models/UserGroup"));
+const Group_1 = __importStar(require("../models/Group"));
+const UserGroup_1 = __importStar(require("../models/UserGroup"));
+const Institute_1 = __importStar(require("../models/Institute"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const educationRouter = express_1.default.Router();
@@ -109,10 +120,20 @@ educationRouter.get('/:id', auth_1.auth, async (req, res) => {
  */
 educationRouter.post('/add', auth_1.auth, async (req, res) => {
     (0, UserEducation_1.initializeUEducationModel)((0, db_1.getSequelize)());
+    (0, Department_1.initializeDepartmentModel)((0, db_1.getSequelize)());
+    (0, Course_1.initializeCourseModel)((0, db_1.getSequelize)());
+    (0, Group_1.initializeGroupModel)((0, db_1.getSequelize)());
+    (0, UserGroup_1.initializeUGroupModel)((0, db_1.getSequelize)());
+    (0, Institute_1.initializeInstitutesModel)((0, db_1.getSequelize)());
     try {
-        const { id, user_id, university, degree, course_id, department_id, specialization, start_year, end_year, location } = req.body;
+        const { id, user_id, degree, course_id, department_id, specialization, is_additional, start_year, end_year, location } = req.body;
+        let university = req.body.university;
         const institute_id = req.instituteId;
         const yeargroupname = "Batch of " + end_year;
+        const institutedata = await Institute_1.default.findOne({ where: { id: institute_id } });
+        if (is_additional == 0) {
+            university = institutedata?.institute_name;
+        }
         if (id) {
             const education = await UserEducation_1.default.update({
                 university,
@@ -120,6 +141,7 @@ educationRouter.post('/add', auth_1.auth, async (req, res) => {
                 course_id,
                 department_id,
                 specialization,
+                is_additional,
                 start_year,
                 end_year,
                 location
@@ -136,58 +158,67 @@ educationRouter.post('/add', auth_1.auth, async (req, res) => {
                 course_id,
                 department_id,
                 specialization,
+                is_additional,
                 start_year,
                 end_year,
                 location
             });
-            const group = await Group_1.default.findOne({ where: { group_name: yeargroupname } });
-            const coursename = await Course_1.default.findOne({ where: { id: course_id } });
-            const departname = await Department_1.default.findOne({ where: { id: department_id } });
-            const coursegroupname = coursename?.course_shortcode + " " + end_year + ", " + departname?.department_shortcode;
-            const coursegroup = await Group_1.default.findOne({ where: { group_name: coursegroupname } });
-            if (group) {
-                var group_id = group.id;
-                const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
-                if (!usergroupdata) {
+            if (is_additional == 0) {
+                const group = await Group_1.default.findOne({ where: { group_name: yeargroupname, institute_id: institute_id } });
+                const coursename = await Course_1.default.findOne({ where: { id: course_id } });
+                const departname = await Department_1.default.findOne({ where: { id: department_id } });
+                let coursegroupname;
+                if (departname) {
+                    coursegroupname = coursename?.course_shortcode + " " + end_year + ", " + departname?.department_shortcode;
+                }
+                else {
+                    coursegroupname = coursename?.course_shortcode + " " + end_year;
+                }
+                const coursegroup = await Group_1.default.findOne({ where: { group_name: coursegroupname, institute_id: institute_id } });
+                if (group) {
+                    var group_id = group.id;
+                    const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
+                    if (!usergroupdata) {
+                        const usergroup = await UserGroup_1.default.create({
+                            user_id,
+                            group_id,
+                        });
+                    }
+                }
+                else {
+                    const group_name = yeargroupname;
+                    const groupdata = await Group_1.default.create({
+                        institute_id,
+                        group_name
+                    });
+                    var group_id = groupdata.id;
                     const usergroup = await UserGroup_1.default.create({
                         user_id,
                         group_id,
                     });
                 }
-            }
-            else {
-                const group_name = yeargroupname;
-                const groupdata = await Group_1.default.create({
-                    institute_id,
-                    group_name
-                });
-                var group_id = groupdata.id;
-                const usergroup = await UserGroup_1.default.create({
-                    user_id,
-                    group_id,
-                });
-            }
-            if (coursegroup) {
-                var group_id = coursegroup.id;
-                const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
-                if (!usergroupdata) {
+                if (coursegroup) {
+                    var group_id = coursegroup.id;
+                    const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
+                    if (!usergroupdata) {
+                        const usergroup = await UserGroup_1.default.create({
+                            user_id,
+                            group_id,
+                        });
+                    }
+                }
+                else {
+                    const group_name = coursegroupname;
+                    const groupdata = await Group_1.default.create({
+                        institute_id,
+                        group_name
+                    });
+                    var group_id = groupdata.id;
                     const usergroup = await UserGroup_1.default.create({
                         user_id,
                         group_id,
                     });
                 }
-            }
-            else {
-                const group_name = coursegroupname;
-                const groupdata = await Group_1.default.create({
-                    institute_id,
-                    group_name
-                });
-                var group_id = groupdata.id;
-                const usergroup = await UserGroup_1.default.create({
-                    user_id,
-                    group_id,
-                });
             }
             res.json({ message: "Education Added", data: alumnimessage });
         }

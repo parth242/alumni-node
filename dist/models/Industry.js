@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeIndustryModel = void 0;
+exports.initializeIndustryModel = initializeIndustryModel;
 const sequelize_1 = require("sequelize");
 class Industries extends sequelize_1.Model {
 }
@@ -42,6 +42,5 @@ function initializeIndustryModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeIndustryModel = initializeIndustryModel;
 exports.default = Industries;
 //# sourceMappingURL=Industry.js.map

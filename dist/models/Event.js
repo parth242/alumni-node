@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeEventModel = void 0;
+exports.initializeEventModel = initializeEventModel;
 const sequelize_1 = require("sequelize");
 class Events extends sequelize_1.Model {
 }
@@ -20,6 +20,10 @@ function initializeEventModel(sequelize) {
             event_title: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
+            },
+            event_time: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
             },
             event_date: {
                 type: sequelize_1.DataTypes.STRING,
@@ -53,6 +57,18 @@ function initializeEventModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,
             },
+            join_members: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            maybe_members: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            decline_members: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
             createdAt: {
                 field: "created_on",
                 type: sequelize_1.DataTypes.DATE,
@@ -69,6 +85,5 @@ function initializeEventModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeEventModel = initializeEventModel;
 exports.default = Events;
 //# sourceMappingURL=Event.js.map

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeResumeModel = void 0;
+exports.initializeResumeModel = initializeResumeModel;
 const sequelize_1 = require("sequelize");
 class ResumeAttachments extends sequelize_1.Model {
 }
@@ -13,10 +13,10 @@ function initializeResumeModel(sequelize) {
                 autoIncrement: true,
                 primaryKey: true,
             },
-            institute_id: {
-                type: sequelize_1.DataTypes.INTEGER,
-                allowNull: false,
-            },
+            // institute_id: {
+            // 	type: DataTypes.INTEGER,
+            // 	allowNull: false,
+            // },
             user_id: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
@@ -48,11 +48,10 @@ function initializeResumeModel(sequelize) {
         }, {
             timestamps: true,
             sequelize,
-            modelName: 'resume_attachments',
+            modelName: "resume_attachments",
         });
         isUserModelInitialized = true;
     }
 }
-exports.initializeResumeModel = initializeResumeModel;
 exports.default = ResumeAttachments;
 //# sourceMappingURL=ResumeAttachment.js.map

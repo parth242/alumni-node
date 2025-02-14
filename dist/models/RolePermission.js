@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeRPermissionModel = void 0;
+exports.initializeRPermissionModel = initializeRPermissionModel;
 const sequelize_1 = require("sequelize");
 class RolePermission extends sequelize_1.Model {
 }
@@ -37,6 +37,5 @@ function initializeRPermissionModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeRPermissionModel = initializeRPermissionModel;
 exports.default = RolePermission;
 //# sourceMappingURL=RolePermission.js.map

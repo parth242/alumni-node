@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeFeedModel = void 0;
+exports.initializeFeedModel = initializeFeedModel;
 const sequelize_1 = require("sequelize");
 class Feed extends sequelize_1.Model {
 }
@@ -20,6 +20,10 @@ function initializeFeedModel(sequelize) {
             description: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
+            },
+            feed_image: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
             },
             status: {
                 type: sequelize_1.DataTypes.STRING,
@@ -53,6 +57,5 @@ function initializeFeedModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeFeedModel = initializeFeedModel;
 exports.default = Feed;
 //# sourceMappingURL=Feed.js.map

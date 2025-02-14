@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -136,14 +146,16 @@ professionalskillRouter.post('/create', async (req, res) => {
     (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
     try {
         const { id, skill_name, status } = req.body;
+        const institute_id = req.instituteId;
         console.log("req.body", req.body);
+        console.log("institute_id", institute_id);
         let professionalskill;
         if (id) {
-            professionalskill = await Professionalskill_1.default.findOne({ where: { skill_name: skill_name, id: { $not: id } } });
+            professionalskill = await Professionalskill_1.default.findOne({ where: { skill_name: skill_name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", professionalskill);
         }
         else {
-            professionalskill = await Professionalskill_1.default.findOne({ where: { skill_name: skill_name } });
+            professionalskill = await Professionalskill_1.default.findOne({ where: { skill_name: skill_name, institute_id: institute_id } });
         }
         if (professionalskill) {
             res.status(500).json({ message: "Professionalskill already exist." });
@@ -160,6 +172,7 @@ professionalskillRouter.post('/create', async (req, res) => {
         }
         else {
             const professionalskill = await Professionalskill_1.default.create({
+                institute_id,
                 skill_name,
                 status
             });
@@ -167,6 +180,7 @@ professionalskillRouter.post('/create', async (req, res) => {
         }
     }
     catch (error) {
+        console.error("error", error);
         res.status(500).json({ message: (0, functions_1.catchError)(error) });
     }
 });

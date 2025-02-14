@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeSubmenuModel = void 0;
+exports.initializeSubmenuModel = initializeSubmenuModel;
 const sequelize_1 = require("sequelize");
 class Submenus extends sequelize_1.Model {
 }
@@ -66,6 +66,5 @@ function initializeSubmenuModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeSubmenuModel = initializeSubmenuModel;
 exports.default = Submenus;
 //# sourceMappingURL=Submenu.js.map

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeBusinessDirectoryModel = void 0;
+exports.initializeBusinessDirectoryModel = initializeBusinessDirectoryModel;
 const sequelize_1 = require("sequelize");
 const Industry_1 = __importDefault(require("./Industry"));
 class BusinessDirectorys extends sequelize_1.Model {
@@ -80,6 +80,11 @@ function initializeBusinessDirectoryModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
             },
+            member_ids: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+                defaultValue: "",
+            },
             createdAt: {
                 field: "created_on",
                 type: sequelize_1.DataTypes.DATE,
@@ -90,7 +95,7 @@ function initializeBusinessDirectoryModel(sequelize) {
             },
             social_facebook: {
                 type: sequelize_1.DataTypes.STRING,
-                allowNull: true,
+                allowNull: true, // This allows the field to be null
                 defaultValue: "", // Set default value as an empty string
             },
             social_instagram: {
@@ -104,6 +109,11 @@ function initializeBusinessDirectoryModel(sequelize) {
                 defaultValue: "",
             },
             social_twitter: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+                defaultValue: "",
+            },
+            social_youtube: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,
                 defaultValue: "",
@@ -130,6 +140,5 @@ function initializeBusinessDirectoryModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeBusinessDirectoryModel = initializeBusinessDirectoryModel;
 exports.default = BusinessDirectorys;
 //# sourceMappingURL=BusinessDirectory.js.map

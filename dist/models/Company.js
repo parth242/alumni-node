@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeCompanyModel = void 0;
+exports.initializeCompanyModel = initializeCompanyModel;
 const sequelize_1 = require("sequelize");
 class Companies extends sequelize_1.Model {
 }
@@ -12,10 +12,6 @@ function initializeCompanyModel(sequelize) {
                 type: sequelize_1.DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
-            },
-            institute_id: {
-                type: sequelize_1.DataTypes.INTEGER,
-                allowNull: false,
             },
             user_id: {
                 type: sequelize_1.DataTypes.INTEGER,
@@ -57,6 +53,5 @@ function initializeCompanyModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeCompanyModel = initializeCompanyModel;
 exports.default = Companies;
 //# sourceMappingURL=Company.js.map

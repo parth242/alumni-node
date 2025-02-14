@@ -15,13 +15,23 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -34,7 +44,7 @@ const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
 const sequelize_1 = require("sequelize");
 const Services_1 = __importStar(require("../models/Services"));
-const Products_1 = __importDefault(require("../models/Products"));
+const Products_1 = __importStar(require("../models/Products"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const businessdirectoryRouter = express_1.default.Router();
@@ -81,24 +91,24 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
         include: [
             {
                 model: Industry_1.default,
-                required: true,
+                required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
             },
         ],
-        where: whereCondition,
+        where: whereCondition, // Your conditions for filtering BusinessDirectorys
         order: [["id", "DESC"]],
-        offset: offset,
+        offset: offset, // Pagination offset
         limit: Number(pageSize), // Pagination limit
     });
     const totalcount = await BusinessDirectory_1.default.count({
         include: [
             {
                 model: Industry_1.default,
-                required: true,
+                required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
             },
         ],
-        distinct: true,
+        distinct: true, // Ensures distinct businessdirectory IDs are counted
         col: "id",
         where: whereCondition,
     });
@@ -106,7 +116,7 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
         include: [
             {
                 model: Industry_1.default,
-                required: true,
+                required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
             },
         ],
@@ -214,7 +224,7 @@ businessdirectoryRouter.delete("/:id", auth_1.auth, async (req, res) => {
 businessdirectoryRouter.post("/create", async (req, res) => {
     (0, BusinessDirectory_1.initializeBusinessDirectoryModel)((0, db_1.getSequelize)());
     try {
-        const { id, business_name, business_website, contact_number, industry_id, number_of_employees, founded, location, business_email, description, is_member_association, business_logo, user_id, status, social_facebook, social_instagram, social_linkedin, social_twitter, } = req.body;
+        const { id, business_name, business_website, contact_number, industry_id, number_of_employees, founded, location, business_email, description, is_member_association, business_logo, user_id, status, social_facebook, social_instagram, social_linkedin, social_twitter, social_youtube, } = req.body;
         const institute_id = req.instituteId;
         console.log("req.body", req.body);
         if (id) {
@@ -245,6 +255,8 @@ businessdirectoryRouter.post("/create", async (req, res) => {
                 updateFields.social_linkedin = social_linkedin;
             if (social_twitter !== undefined)
                 updateFields.social_twitter = social_twitter;
+            if (social_youtube !== undefined)
+                updateFields.social_youtube = social_youtube;
             const [updateCount] = await BusinessDirectory_1.default.update(updateFields, {
                 where: { id: id },
             });
@@ -281,6 +293,7 @@ businessdirectoryRouter.post("/create", async (req, res) => {
                 social_instagram: social_instagram || "",
                 social_linkedin: social_linkedin || "",
                 social_twitter: social_twitter || "",
+                social_youtube: social_youtube || "",
             });
             res.json({
                 message: "BusinessDirectory Created",
@@ -290,6 +303,45 @@ businessdirectoryRouter.post("/create", async (req, res) => {
     }
     catch (error) {
         res.status(500).json({ message: (0, functions_1.catchError)(error) });
+    }
+});
+businessdirectoryRouter.patch("/update-members", async (req, res) => {
+    (0, BusinessDirectory_1.initializeBusinessDirectoryModel)((0, db_1.getSequelize)());
+    try {
+        const { id, members } = req.body;
+        console.log("member_ids", members);
+        // Make sure id and members are provided in the request
+        if (!id || !members) {
+            return res.status(400).json({
+                message: "Business ID and members are required",
+            });
+        }
+        // Find the business directory by ID
+        const businessDirectory = await BusinessDirectory_1.default.findOne({
+            where: { id: id },
+        });
+        if (!businessDirectory) {
+            return res.status(404).json({
+                message: "Business Directory not found",
+            });
+        }
+        const membersString = members.map(item => item.id).join(",");
+        businessDirectory.member_ids = membersString;
+        await businessDirectory.save();
+        return res.json({
+            message: "Business Directory members updated successfully",
+            data: {
+                id,
+                members: membersString,
+            },
+        });
+    }
+    catch (error) {
+        console.error("Error updating members:", error);
+        return res.status(500).json({
+            message: "Internal Server Error",
+            error: error,
+        });
     }
 });
 businessdirectoryRouter.patch("/update-services", async (req, res) => {
@@ -312,7 +364,7 @@ businessdirectoryRouter.patch("/update-services", async (req, res) => {
                 message: "Business Directory not found",
             });
         }
-        const customServices = services.filter((item) => item.isCustom);
+        const customServices = services.filter(item => item.isCustom);
         for (let index = 0; index < customServices.length; index++) {
             const serviceExist = await Services_1.default.findOne({
                 where: { service_name: customServices[index].name.trim() },
@@ -324,7 +376,7 @@ businessdirectoryRouter.patch("/update-services", async (req, res) => {
                 });
             }
         }
-        const servicesString = services.map((item) => item.name).join(",");
+        const servicesString = services.map(item => item.name).join(",");
         businessDirectory.services = servicesString;
         await businessDirectory.save(); // Save the updated business directory
         return res.json({
@@ -345,6 +397,7 @@ businessdirectoryRouter.patch("/update-services", async (req, res) => {
 });
 businessdirectoryRouter.patch("/update-products", async (req, res) => {
     (0, BusinessDirectory_1.initializeBusinessDirectoryModel)((0, db_1.getSequelize)());
+    (0, Products_1.initializeProductsModel)((0, db_1.getSequelize)());
     try {
         const { id, products } = req.body;
         // Make sure id and products are provided in the request
@@ -362,7 +415,7 @@ businessdirectoryRouter.patch("/update-products", async (req, res) => {
                 message: "Business Directory not found",
             });
         }
-        const customProducts = products.filter((item) => item.isCustom);
+        const customProducts = products.filter(item => item.isCustom);
         for (let index = 0; index < customProducts.length; index++) {
             const productsExist = await Products_1.default.findOne({
                 where: { product_name: customProducts[index].name.trim() },
@@ -375,7 +428,7 @@ businessdirectoryRouter.patch("/update-products", async (req, res) => {
             }
         }
         // Join the updated products into a comma-separated string
-        const productNamesString = products.map((item) => item.name).join(",");
+        const productNamesString = products.map(item => item.name).join(",");
         // Update the products field in the database
         businessDirectory.products = productNamesString;
         await businessDirectory.save(); // Save the updated business directory

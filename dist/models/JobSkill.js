@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeJobSkillModel = void 0;
+exports.initializeJobSkillModel = initializeJobSkillModel;
 const sequelize_1 = require("sequelize");
 class JobSkill extends sequelize_1.Model {
 }
@@ -32,11 +32,10 @@ function initializeJobSkillModel(sequelize) {
         }, {
             timestamps: true,
             sequelize,
-            modelName: 'job_skills',
+            modelName: "job_skills",
         });
         isUserModelInitialized = true;
     }
 }
-exports.initializeJobSkillModel = initializeJobSkillModel;
 exports.default = JobSkill;
 //# sourceMappingURL=JobSkill.js.map

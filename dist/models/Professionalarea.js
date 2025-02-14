@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeAreaModel = void 0;
+exports.initializeAreaModel = initializeAreaModel;
 const sequelize_1 = require("sequelize");
 class Professionalareas extends sequelize_1.Model {
 }
@@ -42,6 +42,5 @@ function initializeAreaModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeAreaModel = initializeAreaModel;
 exports.default = Professionalareas;
 //# sourceMappingURL=Professionalarea.js.map

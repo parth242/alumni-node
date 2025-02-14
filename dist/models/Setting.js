@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeSettingModel = void 0;
+exports.initializeSettingModel = initializeSettingModel;
 const sequelize_1 = require("sequelize");
 class Settings extends sequelize_1.Model {
 }
@@ -49,6 +49,5 @@ function initializeSettingModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeSettingModel = initializeSettingModel;
 exports.default = Settings;
 //# sourceMappingURL=Setting.js.map

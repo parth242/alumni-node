@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeWorkModel = void 0;
+exports.initializeWorkModel = initializeWorkModel;
 const sequelize_1 = require("sequelize");
 class WorkRoles extends sequelize_1.Model {
 }
@@ -41,6 +41,5 @@ function initializeWorkModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeWorkModel = initializeWorkModel;
 exports.default = WorkRoles;
 //# sourceMappingURL=WorkRole.js.map

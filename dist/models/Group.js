@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeGroupModel = void 0;
+exports.initializeGroupModel = initializeGroupModel;
 const sequelize_1 = require("sequelize");
 class Groups extends sequelize_1.Model {
 }
@@ -37,6 +37,5 @@ function initializeGroupModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeGroupModel = initializeGroupModel;
 exports.default = Groups;
 //# sourceMappingURL=Group.js.map

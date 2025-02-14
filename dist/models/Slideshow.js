@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeSlideshowModel = void 0;
+exports.initializeSlideshowModel = initializeSlideshowModel;
 const sequelize_1 = require("sequelize");
 class Slideshows extends sequelize_1.Model {
 }
@@ -45,6 +45,5 @@ function initializeSlideshowModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeSlideshowModel = initializeSlideshowModel;
 exports.default = Slideshows;
 //# sourceMappingURL=Slideshow.js.map

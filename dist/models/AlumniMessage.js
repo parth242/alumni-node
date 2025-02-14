@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeMessageModel = void 0;
+exports.initializeMessageModel = initializeMessageModel;
 const sequelize_1 = require("sequelize");
 class AlumniMessage extends sequelize_1.Model {
 }
@@ -54,6 +54,5 @@ function initializeMessageModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeMessageModel = initializeMessageModel;
 exports.default = AlumniMessage;
 //# sourceMappingURL=AlumniMessage.js.map

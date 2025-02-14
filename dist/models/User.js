@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initializeUserModel = void 0;
+exports.initializeUserModel = initializeUserModel;
 const sequelize_1 = require("sequelize");
 class Users extends sequelize_1.Model {
 }
@@ -12,6 +12,10 @@ function initializeUserModel(sequelize) {
                 type: sequelize_1.DataTypes.INTEGER,
                 autoIncrement: true,
                 primaryKey: true,
+            },
+            institute_id: {
+                type: sequelize_1.DataTypes.INTEGER,
+                allowNull: false,
             },
             salutation: {
                 type: sequelize_1.DataTypes.STRING,
@@ -72,6 +76,7 @@ function initializeUserModel(sequelize) {
             department_id: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
+                defaultValue: 0,
             },
             course_id: {
                 type: sequelize_1.DataTypes.INTEGER,
@@ -200,6 +205,14 @@ function initializeUserModel(sequelize) {
                 allowNull: false,
                 defaultValue: 0,
             },
+            resetPasswordToken: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            resetPasswordExpires: {
+                type: sequelize_1.DataTypes.DATE,
+                allowNull: true,
+            },
             createdAt: {
                 field: "created_on",
                 type: sequelize_1.DataTypes.DATE,
@@ -216,6 +229,5 @@ function initializeUserModel(sequelize) {
         isUserModelInitialized = true;
     }
 }
-exports.initializeUserModel = initializeUserModel;
 exports.default = Users;
 //# sourceMappingURL=User.js.map
