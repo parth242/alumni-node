@@ -70,7 +70,16 @@ app.use(async (req, res, next) => {
 				secure: true,
 				sameSite: 'none'  // Adjust based on your requirements
 			});
-			res.cookie("institute_name", institute_name);
+
+			res.cookie("institute_name", institute_name, {
+				httpOnly: true,
+				secure: true,
+				sameSite: 'none'  // Adjust based on your requirements
+			});
+
+
+
+
 
 			// Attach `institute_id` to `req` for immediate use
 			(req as any).instituteId = id;
