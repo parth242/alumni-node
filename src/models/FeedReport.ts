@@ -1,34 +1,38 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
 
-class UserGroup extends Model {
-    public id!: number;
+class FeedReport extends Model {
+    public id!: number;    
+    public report_reason!: string;   
     public user_id!: number;
-    public group_id!: number;
+    public feed_id!: number;    
     public readonly created_on!: Date;
     public readonly updated_on!: Date;
 }
 
 let isUserModelInitialized = false;
 
-export function initializeUGroupModel(sequelize: Sequelize) {
+export function initializeFeedReportModel(sequelize: Sequelize) {
     if (!isUserModelInitialized) {
-UserGroup.init(
+FeedReport.init(
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
+        },        
+        report_reason: {
+            type: DataTypes.STRING,
+            allowNull: false,            
         },
         user_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
-        },        
-        group_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,    
-            defaultValue: 0,        
         },
+        feed_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+        },        
         createdAt: {
             field: "created_on",
             type: DataTypes.DATE,
@@ -42,11 +46,10 @@ UserGroup.init(
     {
         timestamps: true,
         sequelize,
-        modelName: 'user_group',
+        modelName: 'feed_reports',
     }
 );
-isUserModelInitialized = true
+isUserModelInitialized = true;
     }
 }
-
-export default UserGroup;
+export default FeedReport;

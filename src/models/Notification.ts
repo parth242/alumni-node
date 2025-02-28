@@ -1,55 +1,45 @@
 import { DataTypes, Model, Sequelize } from 'sequelize';
 
 
-class Feed extends Model {
-    public id!: number;
-    public institute_id!: number;
-    public description!: string;
-    public feed_image!: string;
-    public status!: string;
-    public user_id!: number;
-    public group_id!: number;
-    public category_id!: number;
+class Notification extends Model {
+    public id!: number;    
+    public message_desc!: string;
+    public notify_url!: string;    
+    public sender_id!: number;
+    public receiver_id!: number;
+    public is_read!: number;
     public readonly created_on!: Date;
     public readonly updated_on!: Date;
 }
 
 let isUserModelInitialized = false;
 
-export function initializeFeedModel(sequelize: Sequelize) {
+export function initializeNotificationModel(sequelize: Sequelize) {
     if (!isUserModelInitialized) {
-Feed.init(
+Notification.init(
     {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
             primaryKey: true,
-        },
-        institute_id: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-        },
-        description: {
+        },        
+        message_desc: {
             type: DataTypes.STRING,
             allowNull: false,            
         },   
-        feed_image: {
+        notify_url: {
             type: DataTypes.STRING,
             allowNull: true,            
-        },      
-        status: {
-            type: DataTypes.STRING,
-            allowNull: false,            
         },
-        user_id: {
+        sender_id: {
             type: DataTypes.INTEGER,
             allowNull: false,
         },
-        group_id: {
+        receiver_id: {
             type: DataTypes.INTEGER,
-            allowNull: true,
+            allowNull: false,
         },
-        category_id: {
+        is_read: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
@@ -66,10 +56,10 @@ Feed.init(
     {
         timestamps: true,
         sequelize,
-        modelName: 'feeds',
+        modelName: 'notifications',
     }
 );
 isUserModelInitialized = true;
     }
 }
-export default Feed;
+export default Notification;

@@ -17,23 +17,19 @@ const groupRouter = express.Router();
 groupRouter.get('/', auth, async (req, res) => {
     initializeUGroupModel(getSequelize());
     initializeGroupModel(getSequelize());
-    const institute_id = (req as any).instituteId;
+    const institute_id = (req as any).instituteId;    
     
     Groups.hasMany(UserGroup, {foreignKey: 'group_id'});
     UserGroup.belongsTo(Groups, {foreignKey: 'group_id', targetKey: 'id'});
     
     
-    let whereCondition: WhereOptions<any> = {};
-    
-   
-       
+    let whereCondition: WhereOptions<any> = {}; 
 
     if (req.query.hasOwnProperty('user_id')) {
       
             whereCondition.user_id = req.query.user_id;
        
-    }
-    
+    }    
 
     const usergroup = await UserGroup.findAll({
          include: [{
@@ -46,6 +42,7 @@ groupRouter.get('/', auth, async (req, res) => {
     order: [['id', 'ASC']],
     
       });
+      
       
     
     res.status(200).json({ total_records: 10, data: usergroup });

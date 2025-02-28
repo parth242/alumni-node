@@ -14,8 +14,11 @@ const professionalskillRouter = express.Router();
 
 professionalskillRouter.get('/', async (req, res) => {
     initializeSkillModel(getSequelize());
-    console.log("req", req.body);
-    const professionalskill = await Professionalskills.findAll();
+    
+    const instituteId = (req as any).instituteId;
+
+    const professionalskill = await Professionalskills.findAll({        
+        where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: professionalskill });
 
 });
@@ -23,9 +26,11 @@ professionalskillRouter.get('/', async (req, res) => {
 
 professionalskillRouter.get('/:id', auth, async (req, res) => {
     initializeSkillModel(getSequelize());
-    console.log("req.params.id", req.params.id);
-    const professionalskill = await Professionalskills.findOne({ where: { id: req.params.id } });
-    console.log("professionalskill", professionalskill);
+    
+    const instituteId = (req as any).instituteId;
+
+    const professionalskill = await Professionalskills.findOne({ where: { id: req.params.id, institute_id: instituteId } });
+    
     const professionalskillDetails = JSON.parse(JSON.stringify(professionalskill));
     // Second method to get data
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
@@ -69,8 +74,10 @@ professionalskillRouter.get('/:id', auth, async (req, res) => {
 
 professionalskillRouter.delete('/:id', auth, async (req, res) => {
     initializeSkillModel(getSequelize());
-    console.log("req.params.id", req.params.id);
-    const professionalskill = await Professionalskills.findOne({ where: { id: req.params.id } });
+    
+    const institute_id = (req as any).instituteId;
+
+    const professionalskill = await Professionalskills.findOne({ where: { id: req.params.id, institute_id: institute_id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!professionalskill) {
@@ -80,7 +87,7 @@ professionalskillRouter.delete('/:id', auth, async (req, res) => {
 
     try {
      await Professionalskills.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',
@@ -95,7 +102,7 @@ professionalskillRouter.delete('/:id', auth, async (req, res) => {
 
 professionalskillRouter.get('/status/:id', auth, async (req, res) => {
     initializeSkillModel(getSequelize());
-    console.log("req.params.id", req.params.id);
+   
     const professionalskill = await Professionalskills.findOne({ where: { id: req.params.id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
@@ -138,8 +145,6 @@ professionalskillRouter.post('/create', async (req, res) => {
             status                    
         } = req.body;
         const institute_id = (req as any).instituteId;
-        console.log("req.body", req.body);
-        console.log("institute_id", institute_id);
         
 
         let professionalskill: Professionalskills | null;
@@ -178,7 +183,6 @@ professionalskillRouter.post('/create', async (req, res) => {
                 
         }
     } catch (error) {
-        console.error("error", error);
         res.status(500).json({ message: catchError(error) });
     }
 });

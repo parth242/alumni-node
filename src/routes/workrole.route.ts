@@ -18,7 +18,10 @@ const workroleRouter = express.Router();
 workroleRouter.get('/', async (req, res) => {
     initializeWorkModel(getSequelize());
     console.log("req", req.body);
-    const workrole = await WorkRoles.findAll();
+    const instituteId = (req as any).instituteId;
+
+    const workrole = await WorkRoles.findAll({        
+        where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: workrole });
 
 });
@@ -27,7 +30,9 @@ workroleRouter.get('/', async (req, res) => {
 workroleRouter.get('/:id', auth, async (req, res) => {
     initializeWorkModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const workrole = await WorkRoles.findOne({ where: { id: req.params.id } });
+    const instituteId = (req as any).instituteId;
+
+    const workrole = await WorkRoles.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("workrole", workrole);
     const workroleDetails = JSON.parse(JSON.stringify(workrole));
     // Second method to get data
@@ -124,7 +129,9 @@ workroleRouter.post('/create', async (req, res) => {
 workroleRouter.delete('/:id', auth, async (req, res) => {
     initializeWorkModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const workrole = await WorkRoles.findOne({ where: { id: req.params.id } });
+    const institute_id = (req as any).instituteId;
+
+    const workrole = await WorkRoles.findOne({ where: { id: req.params.id, institute_id: institute_id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!workrole) {
@@ -134,7 +141,7 @@ workroleRouter.delete('/:id', auth, async (req, res) => {
 
     try {
      await WorkRoles.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

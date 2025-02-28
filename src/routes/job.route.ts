@@ -7,8 +7,10 @@ import { Op,WhereOptions,Sequelize } from 'sequelize';
 import Users, { initializeUserModel } from "../models/User";
 import JobSkill, { initializeJobSkillModel } from '../models/JobSkill';
 import JobArea, { initializeJobAreaModel } from '../models/JobArea';
+import Notification, { initializeNotificationModel } from '../models/Notification';
 import Institutes , { initializeInstitutesModel } from '../models/Institute';
 import EmailTemplates , { initializeEmailTemplateModel } from '../models/EmailTemplate';
+import UserGroup, { initializeUGroupModel } from '../models/UserGroup';
 import nodemailer from "nodemailer";
 
 // import CryptoJS from "crypto-js";
@@ -59,6 +61,14 @@ jobRouter.get('/', auth, async (req, res) => {
         
         whereCondition.is_internship = req.query.is_internship;          
         
+    }
+
+    if (req.query.hasOwnProperty('filter_status')) {
+        const filterstatus = req.query.filter_status;
+
+    if (filterstatus != "") {       
+        whereCondition.status = filterstatus;             
+        }
     }
     
     if(req.query.hasOwnProperty('page_number')){
@@ -328,10 +338,123 @@ jobRouter.delete('/:id', auth, async (req, res) => {
 
 });
 
+jobRouter.post("/status", auth, async (req, res) => {
+    initializeJobModel(getSequelize());
+	initializeUserModel(getSequelize());
+	initializeEmailTemplateModel(getSequelize());
+	initializeInstitutesModel(getSequelize());
+	console.log("req.params.id", req.params.id);
+	
+
+	const emailtemplate = await EmailTemplates.findOne({
+		order: [["id", "DESC"]],
+		offset: 0, // Set the offset
+		limit: 1, // Set the limit to the page size
+	});
+
+	// const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
+	
+
+	try {
+		const { id, status } = req.body;
+
+		const instituteId = (req as any).instituteId;
+
+		const job = await Jobs.findOne({ where: { id: id } });
+
+		
+		const institutedata = await Institutes.findOne({ where: { id: instituteId } });
+
+		console.log("institutedata",institutedata);
+
+		if (!job) {
+			res.status(500).json({ message: "Invalid Job" });
+			return;
+		}
+
+		const jobnew = await Jobs.update(
+			{
+				status,
+			},
+			{
+				where: { id: id },
+			},
+		);
+
+		const transporter = nodemailer.createTransport({
+			service: "gmail",
+			auth: {
+				user: process.env.EMAIL_USER,
+				pass: process.env.EMAIL_PASS,
+			},
+		});
+
+		const notFoundEmails: string[] = [];
+
+        const user = await Users.findOne({ where: { id: job.user_id } });
+
+		// Use Promise.all() to send emails in parallel
+		let subject;
+
+		if(status=='active'){
+			subject = "Your Job has been activated";
+		}
+		else{
+			subject = "Your Job has been deactivated";
+		}
+
+			if (job) {
+				try {
+
+					const dynamicValues = {
+						"[User Name]": user?.first_name+" "+user?.last_name,
+						"[subject]": subject,
+                        "[Job Id]": job.id,
+                        "[Job Title]": job.job_title,
+                        "[Status]": job.status,							
+						"[Your Company Name]": institutedata?.institute_name,
+						"[Year]": new Date().getFullYear(),
+					};
+
+					const emailTemplate = emailtemplate?.job_confirm_mail as any;
+					const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
+                               .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
+							   .replace(/\[subject\]/g, dynamicValues["[subject]"])
+                               .replace(/\[Job Id\]/g, dynamicValues["[Job Id]"])
+                               .replace(/\[Job Title\]/g, dynamicValues["[Job Title]"])
+                               .replace(/\[Status\]/g, dynamicValues["[Status]"])
+                               .replace(/\[Year\]/g, dynamicValues["[Year]"]);
+					
+					await transporter.sendMail({
+						from: process.env.EMAIL_USER,
+						to: user?.email,
+						subject: subject,
+						html: finalHtml,
+						headers: {
+							'Content-Type': 'text/html; charset=UTF-8',
+						  },
+					});
+				} catch (err) {
+					console.error(`Failed to send email to ${user?.email}:`, err);
+				}
+			} 		
+
+		res.json({ message: "Status Updated Successfully", data: job });
+	} catch (error) {
+		res.status(500).json({ message: catchError(error) });
+	}	
+});
+
 jobRouter.post('/create', async (req, res) => {
     initializeJobModel(getSequelize());
     initializeJobSkillModel(getSequelize());
     initializeJobAreaModel(getSequelize());
+    initializeUserModel(getSequelize());
+	initializeEmailTemplateModel(getSequelize());
+    initializeInstitutesModel(getSequelize());	
+    initializeNotificationModel(getSequelize());	
+    initializeUGroupModel(getSequelize());
+    
     try {
         const {
             id,
@@ -356,6 +479,12 @@ jobRouter.post('/create', async (req, res) => {
         } = req.body;
         const institute_id = (req as any).instituteId;
         console.log("req.body", req.body);
+
+        
+
+        const institutedata = await Institutes.findOne({ where: { id: institute_id } });
+
+        const user = await Users.findOne({ where: { id: user_id } });
 
         let job: Jobs | null;
         
@@ -445,6 +574,102 @@ jobRouter.post('/create', async (req, res) => {
                     }); 
         
                     const jobskillname = await JobSkill.bulkCreate(skillNames);
+                   
+                    const usergroupnew = await UserGroup.findAll({
+                        where: {'user_id':user_id},
+                        attributes: ['group_id'],
+                        order: [['id', 'ASC']]                    
+                    });
+                
+                    const groupids = usergroupnew.map(groupid =>{
+                        return groupid.dataValues.group_id
+                    } );
+                
+                    const userIds = await UserGroup.findAll({
+                        where: {
+                            group_id: {
+                                [Op.in]: groupids
+                            },
+                            user_id: {
+                                [Op.ne]: user_id  // Exclude user_id
+                            }
+                        },
+                        attributes: ['user_id'],
+                        order: [['id', 'ASC']]                    
+                    });
+                
+                    const messagedesc = user?.first_name+" added new Job Id#"+job.id;
+
+                    const notifyurl = "job-details/"+job.id;
+                    const notifydata = userIds.map(userid =>{
+                        return { sender_id: user_id, receiver_id: userid.dataValues.user_id, message_desc: messagedesc, notify_url: notifyurl};                        
+                    } );
+
+                            
+                    const notificationdata = await Notification.bulkCreate(notifydata);
+
+                    const emailtemplate = await EmailTemplates.findOne({
+                        order: [["id", "DESC"]],
+                        offset: 0, // Set the offset
+                        limit: 1, // Set the limit to the page size
+                    });
+
+                    const adminuser = await Users.findOne({ where: { is_admin: 1, status: "active", institute_id: institute_id } });
+
+                    const transporter = nodemailer.createTransport({
+						service: "gmail",
+						auth: {
+							user: process.env.EMAIL_USER,
+							pass: process.env.EMAIL_PASS,
+						},
+					});
+			
+					const notFoundEmails: string[] = [];
+			
+					// Use Promise.all() to send emails in parallel
+					
+					let subjectAdmin;
+
+					subjectAdmin = "New Job Added";
+			
+						
+							try {
+			
+								const dynamicValues = {
+									"[User Name]": user?.first_name+" "+user?.last_name,											
+									"[Your Company Name]": institutedata?.institute_name,
+									"[Year]": new Date().getFullYear(),
+									"[Job Title]": job_title,
+									"[Company]": company,
+									"[Location]": location,
+									"[Job Id]": job.id,
+                                    "[Contact Email]": contact_email,
+								};
+			
+								
+								const emailAdminTemplate = emailtemplate?.new_job_mail as any;
+								const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
+													  .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
+													  .replace(/\[Job Title\]/g, dynamicValues["[Job Title]"])
+													  .replace(/\[Company\]/g, dynamicValues["[Company]"])	
+													  .replace(/\[Location\]/g, dynamicValues["[Location]"])	
+													  .replace(/\[Job Id\]/g, dynamicValues["[Job Id]"])
+                                                      .replace(/\[Contact Email\]/g, dynamicValues["[Contact Email]"])											  
+													  .replace(/\[Year\]/g, dynamicValues["[Year]"]);
+								
+								
+								await transporter.sendMail({
+									from: process.env.EMAIL_USER,
+									to: adminuser?.email,
+									subject: subjectAdmin,
+									html: finalAdminHtml,
+									headers: {
+										'Content-Type': 'text/html; charset=UTF-8',
+									  },
+								});
+							} catch (err) {
+								console.error(`Failed to send email to ${adminuser?.email}:`, err);
+							}
 
                     res.json({ message: "Job Created", data: job });
                 

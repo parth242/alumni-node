@@ -116,12 +116,14 @@ Users.init(
             allowNull: true,           
         },
         batch_start: {
-            type: DataTypes.INTEGER,
-            allowNull: true,            
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: false,
         },
         batch_end: {
-            type: DataTypes.INTEGER,
-            allowNull: true,            
+            type: DataTypes.STRING,
+            allowNull: true,
+            unique: false,
         },
         department_id: {
             type: DataTypes.INTEGER,

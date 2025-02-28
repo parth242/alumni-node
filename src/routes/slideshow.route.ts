@@ -37,7 +37,10 @@ const slideshowRouter = express.Router();
 slideshowRouter.get('/', async (req, res) => {
     initializeSlideshowModel(getSequelize());
     console.log("req", req.body);
-    const slideshow = await Slideshows.findAll();
+    const instituteId = (req as any).instituteId;
+
+    const slideshow = await Slideshows.findAll({        
+        where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: slideshow });
 
 });
@@ -46,7 +49,9 @@ slideshowRouter.get('/', async (req, res) => {
 slideshowRouter.get('/:id', auth, async (req, res) => {
     initializeSlideshowModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const slideshow = await Slideshows.findOne({ where: { id: req.params.id } });
+    const instituteId = (req as any).instituteId;
+
+    const slideshow = await Slideshows.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("slideshow", slideshow);
     const slideshowDetails = JSON.parse(JSON.stringify(slideshow));
     // Second method to get data
@@ -92,7 +97,9 @@ slideshowRouter.get('/:id', auth, async (req, res) => {
 slideshowRouter.delete('/:id', auth, async (req, res) => {
     initializeSlideshowModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const slideshow = await Slideshows.findOne({ where: { id: req.params.id } });
+    const institute_id = (req as any).instituteId;
+
+    const slideshow = await Slideshows.findOne({ where: { id: req.params.id, institute_id: institute_id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!slideshow) {
@@ -102,7 +109,7 @@ slideshowRouter.delete('/:id', auth, async (req, res) => {
 
     try {
      await Slideshows.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

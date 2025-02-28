@@ -17,6 +17,7 @@ class Events extends Model {
     public maybe_members!: number[];
     public decline_members!: number[];
     public user_id!: number;
+    public status!: string;
     public readonly created_on!: Date;
     public readonly updated_on!: Date;
 }
@@ -86,6 +87,10 @@ Events.init(
             allowNull: true,
         },
         decline_members: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        status: {
             type: DataTypes.STRING,
             allowNull: true,
         },

@@ -18,7 +18,10 @@ const industryRouter = express.Router();
 industryRouter.get('/', async (req, res) => {
     initializeIndustryModel(getSequelize());
     console.log("req", req.body);
-    const industry = await Industries.findAll();
+    const instituteId = (req as any).instituteId;
+
+    const industry = await Industries.findAll({        
+        where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: industry });
 
 });
@@ -27,7 +30,9 @@ industryRouter.get('/', async (req, res) => {
 industryRouter.get('/:id', auth, async (req, res) => {
     initializeIndustryModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const industry = await Industries.findOne({ where: { id: req.params.id } });
+    const instituteId = (req as any).instituteId;
+
+    const industry = await Industries.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("industry", industry);
     const industryDetails = JSON.parse(JSON.stringify(industry));
     // Second method to get data
@@ -176,7 +181,9 @@ industryRouter.post('/createusercompany', async (req, res) => {
 industryRouter.delete('/:id', auth, async (req, res) => {
     initializeIndustryModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const industry = await Industries.findOne({ where: { id: req.params.id } });
+    const institute_id = (req as any).instituteId;
+
+    const industry = await Industries.findOne({ where: { id: req.params.id, institute_id: institute_id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!industry) {
@@ -186,7 +193,7 @@ industryRouter.delete('/:id', auth, async (req, res) => {
 
     try {
      await Industries.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

@@ -15,7 +15,10 @@ const professionalareaRouter = express.Router();
 professionalareaRouter.get('/', async (req, res) => {
     initializeAreaModel(getSequelize());
     console.log("req", req.body);
-    const professionalarea = await Professionalareas.findAll();
+    const instituteId = (req as any).instituteId;
+
+    const professionalarea = await Professionalareas.findAll({        
+        where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: professionalarea });
 
 });
@@ -24,7 +27,9 @@ professionalareaRouter.get('/', async (req, res) => {
 professionalareaRouter.get('/:id', auth, async (req, res) => {
     initializeAreaModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const professionalarea = await Professionalareas.findOne({ where: { id: req.params.id } });
+    const instituteId = (req as any).instituteId;
+
+    const professionalarea = await Professionalareas.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("professionalarea", professionalarea);
     const professionalareaDetails = JSON.parse(JSON.stringify(professionalarea));
     // Second method to get data
@@ -121,7 +126,9 @@ professionalareaRouter.post('/create', async (req, res) => {
 professionalareaRouter.delete('/:id', auth, async (req, res) => {
     initializeAreaModel(getSequelize());
     console.log("req.params.id", req.params.id);
-    const professionalarea = await Professionalareas.findOne({ where: { id: req.params.id } });
+    const institute_id = (req as any).instituteId;
+
+    const professionalarea = await Professionalareas.findOne({ where: { id: req.params.id, institute_id: institute_id } });
    
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!professionalarea) {
@@ -131,7 +138,7 @@ professionalareaRouter.delete('/:id', auth, async (req, res) => {
 
     try {
      await Professionalareas.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

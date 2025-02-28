@@ -20,7 +20,6 @@ app.use(
 			"http://localhost:3000",
 			"http://localhost:3001",
 			"http://localhost:3002",
-			"https://alumni-react.onrender.com",
 		], // Replace with your client app's URL
 		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 		credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
@@ -31,27 +30,27 @@ app.use(async (req, res, next) => {
 	const siteUrl = req.headers.host;
 
 	try {
-
+		console.log("fetching host url", siteUrl);
 
 		let query = "SELECT * FROM institute_sitedetails WHERE ";
 		let replacements: any[] = [];
 
-		if(req.cookies.instituteId){
+		if(req.cookies.institute_id){
 			query += "id = ?";
-    		replacements.push(req.cookies.instituteId);
+    		replacements.push(req.cookies.institute_id);
 		}  else{
 			query += "institute_siteurl = ?";
     		replacements.push(siteUrl);
 		}
 
-		   const rows: InstituteSiteDetails[] = await configDb.query(query,
+		   const rows: InstituteSiteDetails[] = await configDb.query(query,			
 			{
 				replacements,
 				type: QueryTypes.SELECT,
 			},
 		);
-
-
+		
+			
 		//console.log("rowdata", rows[0]);
 
 		if (rows && rows.length > 0) {
@@ -65,25 +64,12 @@ app.use(async (req, res, next) => {
 			} = rows[0];
 
 			// Store `institute_id` in a cookie (for future requests)
-			res.cookie("institute_id", id, {
-				httpOnly: true,
-				secure: true,
-				sameSite: 'none'  // Adjust based on your requirements
-			});
-
-			res.cookie("institute_name", institute_name, {
-				httpOnly: true,
-				secure: true,
-				sameSite: 'none'  // Adjust based on your requirements
-			});
-
-
-
-
+			res.cookie("institute_id", id);
+			res.cookie("institute_name", institute_name);
 
 			// Attach `institute_id` to `req` for immediate use
 			(req as any).instituteId = id;
-
+		
 			// Set up the site-specific database instance
 			await initializeSequelize({
 				host: site_dbhost,
@@ -91,7 +77,7 @@ app.use(async (req, res, next) => {
 				password: site_dbpassword,
 				database: site_dbname,
 			});
-
+			
 			next();
 		} else {
 			res.status(404).send("Site not found");
@@ -166,24 +152,29 @@ import jobSkillsRouter from "./routes/skills.route";
 import jobApplicationsRouter from "./routes/jobApplications.route";
 import emailtemplateRouter from "./routes/emailtemplate.route";
 import instituteRouter from "./routes/institute.route";
+import notificationRouter from "./routes/notification.route";
+import alumnimessageRouter from "./routes/alumnimessage.route";
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
+console.log(
+	"express.static(__dirname + '/uploads')",
+	__dirname,
+	express.static(__dirname + "/uploads"),
+);
 app.use("/upload", express.static(__dirname + "/uploads")); //Todo Serve content files
 
 // Serve the Swagger documentation
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-app.use(async (req, res, next) => {
-	console.log("in am inside middleware");
+/*app.use(async (req, res, next) => {
 	// Retrieve site-specific database details and `institute_id`
 	(req as any).instituteId =
 		req.cookies.institute_id || (req as any).instituteId; // Fallback to the middleware-set value
 	// Continue with the middleware logic
 	next();
-});
+});*/
 
 app.get("/", (req, res) => {
 	res.send("Welcome to Alumni");
@@ -220,6 +211,8 @@ app.use("/api/v1/group", groupRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/emailtemplate", emailtemplateRouter);
 app.use("/api/v1/institute", instituteRouter);
+app.use("/api/v1/notification", notificationRouter);
+app.use("/api/v1/alumnimessage", alumnimessageRouter);
 
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {

@@ -8,9 +8,7 @@ export function auth(req: Request, res: Response, next: NextFunction) {
         res.status(401).json({ message: 'Unauthorized' });
         return true;
     }
-	console.log("req.cookies", req.cookies);
-	(req as any).institute_id =
-		req.cookies.instituteId || (req as any).instituteId;
+
     const token: string = authToken;
     try {
         // const decoded = jwt.verify(token, process.env.JWT_KEY);
