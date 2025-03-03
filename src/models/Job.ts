@@ -66,7 +66,7 @@ Jobs.init(
         
         deadline_date: {
             type: DataTypes.STRING,
-            allowNull: false,            
+            allowNull: true,            
         },
         posted_date: {
             type: DataTypes.STRING,
