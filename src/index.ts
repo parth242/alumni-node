@@ -211,8 +211,9 @@ app.use("/api/v1/group", groupRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/emailtemplate", emailtemplateRouter);
 app.use("/api/v1/institute", instituteRouter);
-app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/alumnimessage", alumnimessageRouter);
+app.use("/api/v1/notification", notificationRouter);
+
 
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {
