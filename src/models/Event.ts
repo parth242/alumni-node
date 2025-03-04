@@ -78,6 +78,10 @@ Events.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        status: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         join_members: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -89,11 +93,7 @@ Events.init(
         decline_members: {
             type: DataTypes.STRING,
             allowNull: true,
-        },
-        status: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        },        
         createdAt: {
             field: "created_on",
             type: DataTypes.DATE,
