@@ -442,7 +442,7 @@ eventRouter.post('/create', auth, async (req, res) => {
         } else {
                        
            
-            let modifiedStatus = 'inactive';
+             status = 'inactive';
 
                     const event = await Events.create({
                         institute_id,
@@ -454,7 +454,7 @@ eventRouter.post('/create', auth, async (req, res) => {
                         description,
                         event_image,
                         user_id,
-                        status: modifiedStatus || 'inactive',
+                        status,
                         join_members: '',
                         maybe_members: '',
                         decline_members: '',
