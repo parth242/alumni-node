@@ -455,6 +455,9 @@ eventRouter.post('/create', auth, async (req, res) => {
                         event_image,
                         user_id,
                         status: modifiedStatus || 'inactive',
+                        join_members: '',
+                        maybe_members: '',
+                        decline_members: '',
                         group_id                        
                     });
 
