@@ -80,7 +80,7 @@ Events.init(
         },
         status: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
         },
         join_members: {
             type: DataTypes.STRING,

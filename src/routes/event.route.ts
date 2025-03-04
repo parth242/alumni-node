@@ -454,9 +454,8 @@ eventRouter.post('/create', auth, async (req, res) => {
                         description,
                         event_image,
                         user_id,
-                        status: modifiedStatus,
-                        group_id,
-                        
+                        status: modifiedStatus || 'inactive',
+                        group_id                        
                     });
 
                     const usergroupnew = await UserGroup.findAll({
