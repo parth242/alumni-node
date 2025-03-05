@@ -50,13 +50,17 @@ const industryRouter = express_1.default.Router();
 industryRouter.get('/', async (req, res) => {
     (0, Industry_1.initializeIndustryModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const industry = await Industry_1.default.findAll();
+    const instituteId = req.instituteId;
+    const industry = await Industry_1.default.findAll({
+        where: { institute_id: instituteId }
+    });
     res.status(200).json({ total_records: 10, data: industry });
 });
 industryRouter.get('/:id', auth_1.auth, async (req, res) => {
     (0, Industry_1.initializeIndustryModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const industry = await Industry_1.default.findOne({ where: { id: req.params.id } });
+    const instituteId = req.instituteId;
+    const industry = await Industry_1.default.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("industry", industry);
     const industryDetails = JSON.parse(JSON.stringify(industry));
     // Second method to get data
@@ -165,7 +169,8 @@ industryRouter.post('/createusercompany', async (req, res) => {
 industryRouter.delete('/:id', auth_1.auth, async (req, res) => {
     (0, Industry_1.initializeIndustryModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const industry = await Industry_1.default.findOne({ where: { id: req.params.id } });
+    const institute_id = req.instituteId;
+    const industry = await Industry_1.default.findOne({ where: { id: req.params.id, institute_id: institute_id } });
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!industry) {
         res.status(500).json({ message: "Invalid Industry" });
@@ -173,7 +178,7 @@ industryRouter.delete('/:id', auth_1.auth, async (req, res) => {
     }
     try {
         await Industry_1.default.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

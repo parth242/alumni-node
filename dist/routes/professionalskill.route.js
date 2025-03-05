@@ -46,15 +46,16 @@ const auth_1 = require("../middleware/auth");
 const professionalskillRouter = express_1.default.Router();
 professionalskillRouter.get('/', async (req, res) => {
     (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
-    console.log("req", req.body);
-    const professionalskill = await Professionalskill_1.default.findAll();
+    const instituteId = req.instituteId;
+    const professionalskill = await Professionalskill_1.default.findAll({
+        where: { institute_id: instituteId }
+    });
     res.status(200).json({ total_records: 10, data: professionalskill });
 });
 professionalskillRouter.get('/:id', auth_1.auth, async (req, res) => {
     (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
-    console.log("req.params.id", req.params.id);
-    const professionalskill = await Professionalskill_1.default.findOne({ where: { id: req.params.id } });
-    console.log("professionalskill", professionalskill);
+    const instituteId = req.instituteId;
+    const professionalskill = await Professionalskill_1.default.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     const professionalskillDetails = JSON.parse(JSON.stringify(professionalskill));
     // Second method to get data
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
@@ -93,8 +94,8 @@ professionalskillRouter.get('/:id', auth_1.auth, async (req, res) => {
  */
 professionalskillRouter.delete('/:id', auth_1.auth, async (req, res) => {
     (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
-    console.log("req.params.id", req.params.id);
-    const professionalskill = await Professionalskill_1.default.findOne({ where: { id: req.params.id } });
+    const institute_id = req.instituteId;
+    const professionalskill = await Professionalskill_1.default.findOne({ where: { id: req.params.id, institute_id: institute_id } });
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!professionalskill) {
         res.status(500).json({ message: "Invalid Professionalskill" });
@@ -102,7 +103,7 @@ professionalskillRouter.delete('/:id', auth_1.auth, async (req, res) => {
     }
     try {
         await Professionalskill_1.default.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',
@@ -116,7 +117,6 @@ professionalskillRouter.delete('/:id', auth_1.auth, async (req, res) => {
 });
 professionalskillRouter.get('/status/:id', auth_1.auth, async (req, res) => {
     (0, Professionalskill_1.initializeSkillModel)((0, db_1.getSequelize)());
-    console.log("req.params.id", req.params.id);
     const professionalskill = await Professionalskill_1.default.findOne({ where: { id: req.params.id } });
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!professionalskill) {
@@ -147,8 +147,6 @@ professionalskillRouter.post('/create', async (req, res) => {
     try {
         const { id, skill_name, status } = req.body;
         const institute_id = req.instituteId;
-        console.log("req.body", req.body);
-        console.log("institute_id", institute_id);
         let professionalskill;
         if (id) {
             professionalskill = await Professionalskill_1.default.findOne({ where: { skill_name: skill_name, institute_id: institute_id, id: { $not: id } } });
@@ -180,7 +178,6 @@ professionalskillRouter.post('/create', async (req, res) => {
         }
     }
     catch (error) {
-        console.error("error", error);
         res.status(500).json({ message: (0, functions_1.catchError)(error) });
     }
 });

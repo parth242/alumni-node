@@ -47,13 +47,17 @@ const professionalareaRouter = express_1.default.Router();
 professionalareaRouter.get('/', async (req, res) => {
     (0, Professionalarea_1.initializeAreaModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const professionalarea = await Professionalarea_1.default.findAll();
+    const instituteId = req.instituteId;
+    const professionalarea = await Professionalarea_1.default.findAll({
+        where: { institute_id: instituteId }
+    });
     res.status(200).json({ total_records: 10, data: professionalarea });
 });
 professionalareaRouter.get('/:id', auth_1.auth, async (req, res) => {
     (0, Professionalarea_1.initializeAreaModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const professionalarea = await Professionalarea_1.default.findOne({ where: { id: req.params.id } });
+    const instituteId = req.instituteId;
+    const professionalarea = await Professionalarea_1.default.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("professionalarea", professionalarea);
     const professionalareaDetails = JSON.parse(JSON.stringify(professionalarea));
     // Second method to get data
@@ -134,7 +138,8 @@ professionalareaRouter.post('/create', async (req, res) => {
 professionalareaRouter.delete('/:id', auth_1.auth, async (req, res) => {
     (0, Professionalarea_1.initializeAreaModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const professionalarea = await Professionalarea_1.default.findOne({ where: { id: req.params.id } });
+    const institute_id = req.instituteId;
+    const professionalarea = await Professionalarea_1.default.findOne({ where: { id: req.params.id, institute_id: institute_id } });
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!professionalarea) {
         res.status(500).json({ message: "Invalid Professionalarea" });
@@ -142,7 +147,7 @@ professionalareaRouter.delete('/:id', auth_1.auth, async (req, res) => {
     }
     try {
         await Professionalarea_1.default.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

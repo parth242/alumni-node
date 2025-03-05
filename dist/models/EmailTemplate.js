@@ -41,6 +41,14 @@ function initializeEmailTemplateModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,
             },
+            job_confirm_mail: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            event_confirm_mail: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
             update_job_status: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,

@@ -30,11 +30,12 @@ app.use((0, cors_1.default)({
 app.use(async (req, res, next) => {
     const siteUrl = req.headers.host;
     try {
+        console.log("fetching host url", siteUrl);
         let query = "SELECT * FROM institute_sitedetails WHERE ";
         let replacements = [];
-        if (req.cookies.instituteId) {
+        if (req.cookies.institute_id) {
             query += "id = ?";
-            replacements.push(req.cookies.instituteId);
+            replacements.push(req.cookies.institute_id);
         }
         else {
             query += "institute_siteurl = ?";
@@ -53,11 +54,7 @@ app.use(async (req, res, next) => {
                 secure: true,
                 sameSite: 'none' // Adjust based on your requirements
             });
-            res.cookie("institute_name", institute_name, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'none' // Adjust based on your requirements
-            });
+            res.cookie("institute_name", institute_name);
             // Attach `institute_id` to `req` for immediate use
             req.instituteId = id;
             // Set up the site-specific database instance
@@ -138,19 +135,21 @@ const skills_route_1 = __importDefault(require("./routes/skills.route"));
 const jobApplications_route_1 = __importDefault(require("./routes/jobApplications.route"));
 const emailtemplate_route_1 = __importDefault(require("./routes/emailtemplate.route"));
 const institute_route_1 = __importDefault(require("./routes/institute.route"));
+const notification_route_1 = __importDefault(require("./routes/notification.route"));
+const alumnimessage_route_1 = __importDefault(require("./routes/alumnimessage.route"));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
+console.log("express.static(__dirname + '/uploads')", __dirname, express_1.default.static(__dirname + "/uploads"));
 app.use("/upload", express_1.default.static(__dirname + "/uploads")); //Todo Serve content files
 // Serve the Swagger documentation
 app.use("/api-docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_1.default));
-app.use(async (req, res, next) => {
-    console.log("in am inside middleware");
+/*app.use(async (req, res, next) => {
     // Retrieve site-specific database details and `institute_id`
-    req.instituteId =
-        req.cookies.institute_id || req.instituteId; // Fallback to the middleware-set value
+    (req as any).instituteId =
+        req.cookies.institute_id || (req as any).instituteId; // Fallback to the middleware-set value
     // Continue with the middleware logic
     next();
-});
+});*/
 app.get("/", (req, res) => {
     res.send("Welcome to Alumni");
 });
@@ -184,6 +183,8 @@ app.use("/api/v1/group", group_route_1.default);
 app.use("/api/v1/category", category_route_1.default);
 app.use("/api/v1/emailtemplate", emailtemplate_route_1.default);
 app.use("/api/v1/institute", institute_route_1.default);
+app.use("/api/v1/alumnimessage", alumnimessage_route_1.default);
+app.use("/api/v1/notification", notification_route_1.default);
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {
     res.status(404).send("Route not found");

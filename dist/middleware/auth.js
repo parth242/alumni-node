@@ -12,9 +12,6 @@ function auth(req, res, next) {
         res.status(401).json({ message: 'Unauthorized' });
         return true;
     }
-    console.log("req.cookies", req.cookies);
-    req.institute_id =
-        req.cookies.instituteId || req.instituteId;
     const token = authToken;
     try {
         // const decoded = jwt.verify(token, process.env.JWT_KEY);

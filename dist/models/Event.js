@@ -57,6 +57,10 @@ function initializeEventModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,
             },
+            status: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: false,
+            },
             join_members: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: true,

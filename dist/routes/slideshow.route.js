@@ -65,13 +65,17 @@ const slideshowRouter = express_1.default.Router();
 slideshowRouter.get('/', async (req, res) => {
     (0, Slideshow_1.initializeSlideshowModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const slideshow = await Slideshow_1.default.findAll();
+    const instituteId = req.instituteId;
+    const slideshow = await Slideshow_1.default.findAll({
+        where: { institute_id: instituteId }
+    });
     res.status(200).json({ total_records: 10, data: slideshow });
 });
 slideshowRouter.get('/:id', auth_1.auth, async (req, res) => {
     (0, Slideshow_1.initializeSlideshowModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const slideshow = await Slideshow_1.default.findOne({ where: { id: req.params.id } });
+    const instituteId = req.instituteId;
+    const slideshow = await Slideshow_1.default.findOne({ where: { id: req.params.id, institute_id: instituteId } });
     console.log("slideshow", slideshow);
     const slideshowDetails = JSON.parse(JSON.stringify(slideshow));
     // Second method to get data
@@ -112,7 +116,8 @@ slideshowRouter.get('/:id', auth_1.auth, async (req, res) => {
 slideshowRouter.delete('/:id', auth_1.auth, async (req, res) => {
     (0, Slideshow_1.initializeSlideshowModel)((0, db_1.getSequelize)());
     console.log("req.params.id", req.params.id);
-    const slideshow = await Slideshow_1.default.findOne({ where: { id: req.params.id } });
+    const institute_id = req.instituteId;
+    const slideshow = await Slideshow_1.default.findOne({ where: { id: req.params.id, institute_id: institute_id } });
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!slideshow) {
         res.status(500).json({ message: "Invalid Slideshow" });
@@ -120,7 +125,7 @@ slideshowRouter.delete('/:id', auth_1.auth, async (req, res) => {
     }
     try {
         await Slideshow_1.default.destroy({
-            where: { id: req.params.id }
+            where: { id: req.params.id, institute_id: institute_id }
         });
         res.status(200).json({
             status: 'success',

@@ -42,10 +42,14 @@ const db_1 = require("../config/db");
 const User_1 = __importStar(require("../models/User"));
 const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
+const sequelize_1 = require("sequelize");
 const Category_1 = __importStar(require("../models/Category"));
 const FeedComment_1 = __importStar(require("../models/FeedComment"));
+const FeedReport_1 = __importStar(require("../models/FeedReport"));
 const EmailTemplate_1 = __importStar(require("../models/EmailTemplate"));
 const Institute_1 = __importStar(require("../models/Institute"));
+const Notification_1 = __importStar(require("../models/Notification"));
+const UserGroup_1 = __importStar(require("../models/UserGroup"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
@@ -275,6 +279,9 @@ feedRouter.delete('/:id', auth_1.auth, async (req, res) => {
 });
 feedRouter.post('/create', async (req, res) => {
     (0, Feed_1.initializeFeedModel)((0, db_1.getSequelize)());
+    (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
+    (0, Notification_1.initializeNotificationModel)((0, db_1.getSequelize)());
+    (0, UserGroup_1.initializeUGroupModel)((0, db_1.getSequelize)());
     try {
         const { id, description, feed_image, status, user_id, group_id, category_id } = req.body;
         const institute_id = req.instituteId;
@@ -304,6 +311,33 @@ feedRouter.post('/create', async (req, res) => {
                 group_id,
                 category_id
             });
+            const user = await User_1.default.findOne({ where: { id: user_id } });
+            const usergroupnew = await UserGroup_1.default.findAll({
+                where: { 'user_id': user_id },
+                attributes: ['group_id'],
+                order: [['id', 'ASC']]
+            });
+            const groupids = usergroupnew.map(groupid => {
+                return groupid.dataValues.group_id;
+            });
+            const userIds = await UserGroup_1.default.findAll({
+                where: {
+                    group_id: {
+                        [sequelize_1.Op.in]: groupids
+                    },
+                    user_id: {
+                        [sequelize_1.Op.ne]: user_id // Exclude user_id
+                    }
+                },
+                attributes: ['user_id'],
+                order: [['id', 'ASC']]
+            });
+            const messagedesc = user?.first_name + " posted on dashboard Id#" + feed.id;
+            const notifyurl = "view-feedback/" + feed.id;
+            const notifydata = userIds.map(userid => {
+                return { sender_id: user_id, receiver_id: userid.dataValues.user_id, message_desc: messagedesc, notify_url: notifyurl };
+            });
+            const notificationdata = await Notification_1.default.bulkCreate(notifydata);
             res.json({ message: "Feed Created", data: feed });
         }
     }
@@ -323,6 +357,22 @@ feedRouter.post('/createcomment', async (req, res) => {
             feed_id
         });
         res.json({ message: "Feed Comment Created", data: feed });
+    }
+    catch (error) {
+        res.status(500).json({ message: (0, functions_1.catchError)(error) });
+    }
+});
+feedRouter.post('/createreport', async (req, res) => {
+    (0, FeedReport_1.initializeFeedReportModel)((0, db_1.getSequelize)());
+    try {
+        const { id, report_reason, user_id, feed_id } = req.body;
+        let feedreport;
+        const feed = await FeedReport_1.default.create({
+            report_reason,
+            user_id,
+            feed_id
+        });
+        res.json({ message: "Feed Report Submitted", data: feed });
     }
     catch (error) {
         res.status(500).json({ message: (0, functions_1.catchError)(error) });

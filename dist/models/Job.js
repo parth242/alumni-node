@@ -43,7 +43,7 @@ function initializeJobModel(sequelize) {
             },
             deadline_date: {
                 type: sequelize_1.DataTypes.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             posted_date: {
                 type: sequelize_1.DataTypes.STRING,
