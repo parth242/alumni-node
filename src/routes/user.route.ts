@@ -1039,8 +1039,8 @@ userRouter.post("/login", async (req, res) => {
 		});
 		const serialized = serialize("token", token, {
 			httpOnly: true,
-			secure: process.env.NODE_ENV === "production",
-			sameSite: "strict",
+			secure: true,
+			sameSite: "none",
 			maxAge: 60 * 60,
 			path: "/",
 		});
@@ -1942,7 +1942,7 @@ userRouter.post("/logout", async (req, res) => {
 	const tokenSerialized = serialize("token", "", {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
-		sameSite: "strict",
+		sameSite: "none",
 		maxAge: -1,
 		path: "/",
 	});
