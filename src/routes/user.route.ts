@@ -26,7 +26,7 @@ import Institutes , { initializeInstitutesModel } from '../models/Institute';
 import Groups, { initializeGroupModel } from '../models/Group';
 import { Op, WhereOptions, WhereAttributeHash, Sequelize  } from "sequelize";
 import nodemailer from "nodemailer";
-   
+
 // import CryptoJS from "crypto-js";
 
 // const upload = multer({ dest: 'uploads/' })
@@ -121,12 +121,12 @@ userRouter.get("/isalumni=:isalumninew/", auth, async (req, res) => {
 	if (req.query.hasOwnProperty("filter_name")) {
 
 		const filterName = req.query.filter_name.trim(); // Trim whitespace if any
-		
-			
+
+
 		if (filterName.includes(" ")) {
 			// If filter_name has a space, split into first_name and last_name
 			const [firstName, lastName] = filterName.split(" ");
-			
+
 			filterwhere = {
 				...filterwhere,
 				[Op.or]: [
@@ -143,10 +143,10 @@ userRouter.get("/isalumni=:isalumninew/", auth, async (req, res) => {
 					{ email: { [Op.like]: `%${filterName}%` } }, // Email condition
 				]
 			};
-		}	
-		
+		}
+
 	}
-	
+
 
 	if (req.query.hasOwnProperty("filter_course")) {
 		const filtercourseid = Number(req.query.filter_course);
@@ -557,8 +557,8 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 	console.log("req.query.filter_status", req.query.filter_status);
 	const instituteId = (req as any).instituteId;
 
-	const event = await Events.findOne({ 
-        
+	const event = await Events.findOne({
+
         where: { id: req.params.event_id } });
 
 	Users.hasMany(UserEducation, { foreignKey: "user_id" });
@@ -587,7 +587,7 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 			if(goinguserId!=''){
 			goinguserIds = JSON.parse(goinguserId); // Parse if it's a JSON string
 			}
-			
+
 		} catch (error) {
 			console.error("Error parsing JSON:", error);
 		}
@@ -600,8 +600,8 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 			if(maybeuserId!=''){
 				maybeuserIds = JSON.parse(maybeuserId); // Parse if it's a JSON string
 			}
-			
-			
+
+
 		} catch (error) {
 			console.error("Error parsing JSON:", error);
 		}
@@ -609,15 +609,15 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 		maybeuserIds = maybeuserId; // Assign directly if it's already an array
 	}
 
-	
+
 	interface CourseWhere {
 		is_additional: Number;
 		[key: string]: Number; // Allow additional properties
 	}
 
-	
+
 	let coursewhere: CourseWhere = { is_additional: 0 };
-	
+
 	let pageNumber;
 	let pageSize;
 	let offset;
@@ -652,7 +652,7 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 			"batch_end",
 		],
 		where: Sequelize.literal(`users.id IN (${goinguserIds.join(",")})`),
-		order: [["id", "DESC"]],		
+		order: [["id", "DESC"]],
 	});
 
 	console.log("users", users);
@@ -760,10 +760,10 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 			"batch_end",
 		],
 		where: Sequelize.literal(`users.id IN (${maybeuserIds.join(",")})`),
-		order: [["id", "DESC"]],		
+		order: [["id", "DESC"]],
 	});
 
-	
+
 	maybeformattedUsers = await Promise.all(
 		maybeusers.map(async user => {
 			const maybeeducations = await UserEducation.findAll({
@@ -839,7 +839,7 @@ userRouter.get("/event_id=:event_id/", auth, async (req, res) => {
 		maybeformattedUsers = {};
 	}
 
-	
+
 	res.status(200).json({ maybeMembers: maybeformattedUsers, joinMembers: formattedUsers });
 });
 
@@ -861,9 +861,9 @@ userRouter.get("/me", auth, async (req, res) => {
 	if(user.is_admin==2){
 
 		userinstitute = user;
-		
+
 	} else{
-		
+
 		userinstitute = await Users.findOne({
 			where: { id: req.body.sessionUser.id, institute_id: instituteId },
 		});
@@ -878,7 +878,7 @@ userRouter.get("/me", auth, async (req, res) => {
 	console.log("user", userinstitute);
 	const userDetails = JSON.parse(JSON.stringify(userinstitute));
 	delete userDetails.password;
-	
+
 	res.json(userDetails);
 });
 
@@ -1012,25 +1012,25 @@ userRouter.post("/login", async (req, res) => {
 	// Second method to get data
 	// const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
 	if (!user) {
-		res.status(500).json({ message: "Invalid email and password" });
+		res.status(500).json({ message: "Invalid email and passwordsfdsfds" });
 		return;
 	}
 
 	let userinstitute;
 	if (user) {
-		
+
 		if(user.is_admin==2){
 
 			userinstitute = user;
-			
+
 		} else{
-			
+
 			const instituteId = (req as any).instituteId;
 
 			userinstitute = await Users.findOne({
 				where: { id: user.id, institute_id: instituteId },
 			});
-			
+
 			if (!userinstitute) {
 				res.status(500).json({ message: "Invalid email and password" });
 				return;
@@ -1094,20 +1094,20 @@ userRouter.post("/change-password", async (req, res) => {
 			res.status(500).json({ message: "Account is not activated" });
 			return;
 		}
-		
+
 	}
 
 	if (!current_password || !password || !confirm_password) {
 		res.status(500).json({ message: "All fields are required." });
 		return;
-		
+
 	  }
-  
+
 	  if (password !== confirm_password) {
 		return res
 		  .status(500)
 		  .json({ message: "New password and confirm password do not match." });
-		 
+
 	  }
 
 	  const passwordMatch = await bcrypt.compare(current_password, user.password);
@@ -1127,7 +1127,7 @@ userRouter.post("/change-password", async (req, res) => {
     const decPassword = bytes.toString(CryptoJS.enc.Utf8);
     const comparision = await bcrypt.compare(decPassword, user.password); */
 
-	
+
 	if (passwordMatch) {
 		const userId = { id: user.id, email: user.email };
 		const token = jwt.sign(userId, process.env.JWT_KEY || "", {
@@ -1155,15 +1155,15 @@ userRouter.post("/change-password", async (req, res) => {
 
 userRouter.post("/forgot_password", async (req, res) => {
 	initializeUserModel(getSequelize());
-	initializeEmailTemplateModel(getSequelize());	
+	initializeEmailTemplateModel(getSequelize());
     initializeInstitutesModel(getSequelize());
-	
+
 	console.log("req", req.body);
 	const { email } = req.body;
 
 	const origin = req.get('origin');
 
-	
+
 
 	const instituteId = (req as any).instituteId;
 
@@ -1206,17 +1206,17 @@ userRouter.post("/forgot_password", async (req, res) => {
 
 		const dynamicValues = {
 			"[User Name]": user.first_name+" "+user.last_name,
-			"[Reset Link]": reseturl,						
+			"[Reset Link]": reseturl,
 			"[Your Company Name]": institutedata?.institute_name,
 			"[Year]": new Date().getFullYear(),
 		};
 
 		const emailTemplate = emailtemplate?.alumni_reset_password_mail as any;
-		const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
+		const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
 				   .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
 				   .replace(/\[Reset Link\]/g, dynamicValues["[Reset Link]"])
 				   .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-		
+
 		await transporter.sendMail({
 			from: process.env.EMAIL_USER,
 			to: user.email,
@@ -1230,8 +1230,8 @@ userRouter.post("/forgot_password", async (req, res) => {
 	} catch (err) {
 		console.error(`Failed to send email to ${user.email}:`, err);
 	}
-	
-	
+
+
 
 	// res.send('Hello, World!');
 });
@@ -1242,7 +1242,7 @@ userRouter.post("/reset_password/:key", async (req, res) => {
 	const key  = req.params.key;
     const { password } = req.body;
 
-	
+
 	const user = await Users.findOne({
 		where: {
 		  resetPasswordToken: key,
@@ -1261,10 +1261,10 @@ userRouter.post("/reset_password/:key", async (req, res) => {
 			res.status(500).json({ message: "Account is not activated" });
 			return;
 		}
-		
+
 	}
 
-	
+
 
 	const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -1274,7 +1274,7 @@ userRouter.post("/reset_password/:key", async (req, res) => {
 
   	await user.save();
 	  res.json({ message: 'Password has been reset successfully' });
-	
+
 	// res.send('Hello, World!');
 });
 
@@ -1340,7 +1340,7 @@ userRouter.post("/status", auth, async (req, res) => {
 	initializeEmailTemplateModel(getSequelize());
 	initializeInstitutesModel(getSequelize());
 	console.log("req.params.id", req.params.id);
-	
+
 
 	const emailtemplate = await EmailTemplates.findOne({
 		order: [["id", "DESC"]],
@@ -1349,7 +1349,7 @@ userRouter.post("/status", auth, async (req, res) => {
 	});
 
 	// const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
-	
+
 
 	try {
 		const { id, status } = req.body;
@@ -1358,7 +1358,7 @@ userRouter.post("/status", auth, async (req, res) => {
 
 		const user = await Users.findOne({ where: { id: id } });
 
-		
+
 		const institutedata = await Institutes.findOne({ where: { id: instituteId } });
 
 		console.log("institutedata",institutedata);
@@ -1404,17 +1404,17 @@ userRouter.post("/status", auth, async (req, res) => {
 
 					const dynamicValues = {
 						"[User Name]": user.first_name+" "+user.last_name,
-						"[subject]": subject,						
+						"[subject]": subject,
 						"[Your Company Name]": institutedata?.institute_name,
 						"[Year]": new Date().getFullYear(),
 					};
 
 					const emailTemplate = emailtemplate?.alumni_confirm_mail as any;
-					const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
+					const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
                                .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
 							   .replace(/\[subject\]/g, dynamicValues["[subject]"])
                                .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-					
+
 					await transporter.sendMail({
 						from: process.env.EMAIL_USER,
 						to: user.email,
@@ -1427,12 +1427,12 @@ userRouter.post("/status", auth, async (req, res) => {
 				} catch (err) {
 					console.error(`Failed to send email to ${user.email}:`, err);
 				}
-			} 		
+			}
 
 		res.json({ message: "Status Updated Successfully", data: user });
 	} catch (error) {
 		res.status(500).json({ message: catchError(error) });
-	}	
+	}
 });
 
 userRouter.post("/profilepic", auth, async (req, res) => {
@@ -1642,7 +1642,7 @@ userRouter.post("/create", async (req, res) => {
     initializeCourseModel(getSequelize());
     initializeGroupModel(getSequelize());
     initializeUGroupModel(getSequelize());
-    initializeInstitutesModel(getSequelize());	
+    initializeInstitutesModel(getSequelize());
 
 	const emailtemplate = await EmailTemplates.findOne({
 		order: [["id", "DESC"]],
@@ -1683,7 +1683,7 @@ userRouter.post("/create", async (req, res) => {
 		console.log("req.body", req.body);
 		const institute_id = (req as any).instituteId;
 
-		
+
 		const institutedata = await Institutes.findOne({ where: { id: institute_id } });
 
 		console.log("institutedata",institutedata);
@@ -1752,7 +1752,7 @@ userRouter.post("/create", async (req, res) => {
 					// const saltRounds = 10;
 					// new_item.password = await bcrypt.hash(password, saltRounds)
 					const institute_id = (req as any).instituteId;
-					
+
 					const user = await Users.create({
 						institute_id,
 						email,
@@ -1776,7 +1776,7 @@ userRouter.post("/create", async (req, res) => {
 						instagram_url,
 						youtube_url,
 						status,
-						about_me,						
+						about_me,
 					});
 
 
@@ -1818,51 +1818,51 @@ userRouter.post("/create", async (req, res) => {
 						coursegroupname = coursename?.course_shortcode+" "+end_year;
 						depart_name = '';
 					}
-					
-		
+
+
 					const coursegroup = await Groups.findOne({ where: { group_name: coursegroupname, institute_id: institute_id } });
 
 					if(group){
-						var group_id = group.id;  
+						var group_id = group.id;
 						const usergroupdata = await UserGroup.findOne({ where: { user_id: user_id, group_id: group_id } });
 						if(!usergroupdata){
 						const usergroup = await UserGroup.create({
 							user_id,
-							group_id,                    
-						}); 
-						}             
+							group_id,
+						});
+						}
 					} else{
 						const group_name= yeargroupname;
 						const groupdata = await Groups.create({
 							institute_id,
-							group_name                    
+							group_name
 						});
-						var group_id = groupdata.id; 
+						var group_id = groupdata.id;
 						const usergroup = await UserGroup.create({
 							user_id,
-							group_id,                    
+							group_id,
 						});
 					}
 
 					if(coursegroup){
-						var group_id = coursegroup.id;  
+						var group_id = coursegroup.id;
 						const usergroupdata = await UserGroup.findOne({ where: { user_id: user_id, group_id:group_id } });
 						if(!usergroupdata){
 						const usergroup = await UserGroup.create({
 							user_id,
-							group_id,                    
-						}); 
-						}             
+							group_id,
+						});
+						}
 					} else{
 						const group_name= coursegroupname;
 						const groupdata = await Groups.create({
 							institute_id,
-							group_name                    
+							group_name
 						});
-						var group_id = groupdata.id; 
+						var group_id = groupdata.id;
 						const usergroup = await UserGroup.create({
 							user_id,
-							group_id,                    
+							group_id,
 						});
 					}
 
@@ -1873,24 +1873,24 @@ userRouter.post("/create", async (req, res) => {
 							pass: process.env.EMAIL_PASS,
 						},
 					});
-			
+
 					const notFoundEmails: string[] = [];
-			
+
 					// Use Promise.all() to send emails in parallel
 					let subject;
 					let subjectAdmin;
 
-			
-					
+
+
 						subject = "Welcome to "+institutedata?.institute_name;
 
 						subjectAdmin = "New Alumni Registered";
-			
-						
+
+
 							try {
-			
+
 								const dynamicValues = {
-									"[User Name]": first_name+" "+last_name,											
+									"[User Name]": first_name+" "+last_name,
 									"[Your Company Name]": institutedata?.institute_name,
 									"[Year]": new Date().getFullYear(),
 									"[Email]": email,
@@ -1898,21 +1898,21 @@ userRouter.post("/create", async (req, res) => {
 									"[Department Name]": depart_name,
 									"[Batch End Year]": end_year,
 								};
-			
+
 								const emailTemplate = emailtemplate?.alumni_register_mail as any;
-								const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
-										   .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])										  
+								const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
+										   .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
 										   .replace(/\[Year\]/g, dynamicValues["[Year]"]);
 
 								const emailAdminTemplate = emailtemplate?.alumni_register_mail_admin as any;
-								const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])                              
+								const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
 													  .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
 													  .replace(/\[Email\]/g, dynamicValues["[Email]"])
-													  .replace(/\[Course Name\]/g, dynamicValues["[Course Name]"])	
-													  .replace(/\[Department Name\]/g, dynamicValues["[Department Name]"])	
-													  .replace(/\[Batch End Year\]/g, dynamicValues["[Batch End Year]"])											  
+													  .replace(/\[Course Name\]/g, dynamicValues["[Course Name]"])
+													  .replace(/\[Department Name\]/g, dynamicValues["[Department Name]"])
+													  .replace(/\[Batch End Year\]/g, dynamicValues["[Batch End Year]"])
 													  .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-								
+
 								await transporter.sendMail({
 									from: process.env.EMAIL_USER,
 									to: email,
@@ -1935,7 +1935,7 @@ userRouter.post("/create", async (req, res) => {
 							} catch (err) {
 								console.error(`Failed to send email to ${email}:`, err);
 							}
-						
+
 
 					res.json({ message: "User Created", data: user });
 				}
