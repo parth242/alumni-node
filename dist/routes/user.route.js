@@ -867,7 +867,7 @@ userRouter.post("/login", async (req, res) => {
     // Second method to get data
     // const user1 = await sequelize.query("SELECT * FROM users WHERE email=" + email);
     if (!user) {
-        res.status(500).json({ message: "Invalid email and password" });
+        res.status(500).json({ message: "Invalid email and password or account is not activated" });
         return;
     }
     let userinstitute;
