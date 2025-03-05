@@ -440,8 +440,9 @@ eventRouter.post('/create', auth, async (req, res) => {
 
             res.json({ message: "Event Updated", data: event });
         } else {
-                               
-
+                       
+           
+            
                     const event = await Events.create({
                         institute_id,
                         event_title,
@@ -452,8 +453,11 @@ eventRouter.post('/create', auth, async (req, res) => {
                         description,
                         event_image,
                         user_id,
-                        group_id,
-                        status
+                        status: 'inactive',
+                        join_members: '',
+                        maybe_members: '',
+                        decline_members: '',
+                        group_id                        
                     });
 
                     const usergroupnew = await UserGroup.findAll({

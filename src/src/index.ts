@@ -20,6 +20,7 @@ app.use(
 			"http://localhost:3000",
 			"http://localhost:3001",
 			"http://localhost:3002",
+			"https://alumni-react.onrender.com",
 		], // Replace with your client app's URL
 		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 		credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
@@ -64,7 +65,11 @@ app.use(async (req, res, next) => {
 			} = rows[0];
 
 			// Store `institute_id` in a cookie (for future requests)
-			res.cookie("institute_id", id);
+			res.cookie("institute_id", id, {				
+				httpOnly: true,
+				secure: true,
+				sameSite: 'none'  // Adjust based on your requirements
+			});
 			res.cookie("institute_name", institute_name);
 
 			// Attach `institute_id` to `req` for immediate use
@@ -211,8 +216,9 @@ app.use("/api/v1/group", groupRouter);
 app.use("/api/v1/category", categoryRouter);
 app.use("/api/v1/emailtemplate", emailtemplateRouter);
 app.use("/api/v1/institute", instituteRouter);
-app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/alumnimessage", alumnimessageRouter);
+app.use("/api/v1/notification", notificationRouter);
+
 
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {
