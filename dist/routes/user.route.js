@@ -132,13 +132,34 @@ userRouter.get("/isalumni=:isalumninew/", auth_1.auth, async (req, res) => {
         };
     }
     if (req.query.hasOwnProperty("filter_name")) {
-        filterwhere = {
-            ...filterwhere,
-            [sequelize_1.Op.or]: [
-                { first_name: { [sequelize_1.Op.like]: `%${req.query.filter_name}%` } }, // Name condition
-                { email: { [sequelize_1.Op.like]: `%${req.query.filter_name}%` } }, // Email condition
-            ],
-        };
+        const filterName = req.query.filter_name;
+        // Check if filter_name is a string before trimming
+        if (typeof filterName === 'string') {
+            const trimmedFilterName = filterName.trim(); // Trim whitespace if any
+            let filterwhere = {};
+            if (trimmedFilterName.includes(" ")) {
+                // If filter_name has a space, split into first_name and last_name
+                const [firstName, lastName] = trimmedFilterName.split(" ");
+                filterwhere = {
+                    ...filterwhere,
+                    [sequelize_1.Op.or]: [
+                        { first_name: { [sequelize_1.Op.like]: `%${firstName}%` } }, // First part in first_name
+                        { last_name: { [sequelize_1.Op.like]: `%${lastName}%` } }, // Second part in last_name
+                    ]
+                };
+            }
+            else {
+                // If no space, match filter_name against first_name or email
+                filterwhere = {
+                    ...filterwhere,
+                    [sequelize_1.Op.or]: [
+                        { first_name: { [sequelize_1.Op.like]: `%${trimmedFilterName}%` } }, // Name condition
+                        { email: { [sequelize_1.Op.like]: `%${trimmedFilterName}%` } }, // Email condition
+                    ]
+                };
+            }
+            // Proceed with your query, adding filterwhere to the query conditions
+        }
     }
     if (req.query.hasOwnProperty("filter_course")) {
         const filtercourseid = Number(req.query.filter_course);

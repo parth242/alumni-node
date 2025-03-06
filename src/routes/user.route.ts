@@ -119,33 +119,40 @@ userRouter.get("/isalumni=:isalumninew/", auth, async (req, res) => {
 	}
 
 	if (req.query.hasOwnProperty("filter_name")) {
-    const filterName = req.query.filter_name.trim(); // Trim whitespace if any
-    
-   
-    if (filterName.includes(" ")) {
-        // If filter_name has a space, split into first_name and last_name
-        const [firstName, lastName] = filterName.split(" ");
-        
-        filterwhere = {
-            ...filterwhere,
-            [Op.or]: [
-                { first_name: { [Op.like]: `%${firstName}%` } }, // First part in first_name
-                { last_name: { [Op.like]: `%${lastName}%` } },   // Second part in last_name
-            ]
-        };
-    } else {
-        // If no space, match filter_name against first_name or email
-        filterwhere = {
-            ...filterwhere,
-            [Op.or]: [
-                { first_name: { [Op.like]: `%${filterName}%` } }, // Name condition
-                { email: { [Op.like]: `%${filterName}%` } }, // Email condition
-            ]
-        };
-    }
-
-    // Proceed with your query, adding filterwhere to the query conditions
-}
+		const filterName = req.query.filter_name;
+		
+		// Check if filter_name is a string before trimming
+		if (typeof filterName === 'string') {
+			const trimmedFilterName = filterName.trim();  // Trim whitespace if any
+			
+			let filterwhere: any = {};
+	
+			if (trimmedFilterName.includes(" ")) {
+				// If filter_name has a space, split into first_name and last_name
+				const [firstName, lastName] = trimmedFilterName.split(" ");
+				
+				filterwhere = {
+					...filterwhere,
+					[Op.or]: [
+						{ first_name: { [Op.like]: `%${firstName}%` } }, // First part in first_name
+						{ last_name: { [Op.like]: `%${lastName}%` } },   // Second part in last_name
+					]
+				};
+			} else {
+				// If no space, match filter_name against first_name or email
+				filterwhere = {
+					...filterwhere,
+					[Op.or]: [
+						{ first_name: { [Op.like]: `%${trimmedFilterName}%` } }, // Name condition
+						{ email: { [Op.like]: `%${trimmedFilterName}%` } }, // Email condition
+					]
+				};
+			}
+	
+			// Proceed with your query, adding filterwhere to the query conditions
+		} 
+	}
+	
 
 
 	if (req.query.hasOwnProperty("filter_course")) {
