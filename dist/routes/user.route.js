@@ -136,7 +136,6 @@ userRouter.get("/isalumni=:isalumninew/", auth_1.auth, async (req, res) => {
         // Check if filter_name is a string before trimming
         if (typeof filterName === 'string') {
             const trimmedFilterName = filterName.trim(); // Trim whitespace if any
-            let filterwhere = {};
             if (trimmedFilterName.includes(" ")) {
                 // If filter_name has a space, split into first_name and last_name
                 const [firstName, lastName] = trimmedFilterName.split(" ");
