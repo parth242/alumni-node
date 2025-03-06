@@ -89,11 +89,11 @@ export function initializeBusinessDirectoryModel(sequelize: Sequelize) {
 				},
 				is_member_association: {
 					type: DataTypes.INTEGER,
-					allowNull: false,
+					allowNull: true,
 				},
 				business_logo: {
 					type: DataTypes.STRING,
-					allowNull: false,
+					allowNull: true,
 				},
 				user_id: {
 					type: DataTypes.INTEGER,

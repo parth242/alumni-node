@@ -132,7 +132,7 @@ userRouter.get("/isalumni=:isalumninew/", auth, async (req, res) => {
 				
 				filterwhere = {
 					...filterwhere,
-					[Op.or]: [
+					[Op.and]: [
 						{ first_name: { [Op.like]: `%${firstName}%` } }, // First part in first_name
 						{ last_name: { [Op.like]: `%${lastName}%` } },   // Second part in last_name
 					]

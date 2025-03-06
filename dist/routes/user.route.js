@@ -141,7 +141,7 @@ userRouter.get("/isalumni=:isalumninew/", auth_1.auth, async (req, res) => {
                 const [firstName, lastName] = trimmedFilterName.split(" ");
                 filterwhere = {
                     ...filterwhere,
-                    [sequelize_1.Op.or]: [
+                    [sequelize_1.Op.and]: [
                         { first_name: { [sequelize_1.Op.like]: `%${firstName}%` } }, // First part in first_name
                         { last_name: { [sequelize_1.Op.like]: `%${lastName}%` } }, // Second part in last_name
                     ]
