@@ -119,14 +119,33 @@ userRouter.get("/isalumni=:isalumninew/", auth, async (req, res) => {
 	}
 
 	if (req.query.hasOwnProperty("filter_name")) {
-		filterwhere = {
-			...filterwhere,
-			[Op.or]: [
-				{ first_name: { [Op.like]: `%${req.query.filter_name}%` } }, // Name condition
-				{ email: { [Op.like]: `%${req.query.filter_name}%` } }, // Email condition
-			],
-		};
-	}
+    const filterName = req.query.filter_name.trim(); // Trim whitespace if any
+    
+   
+    if (filterName.includes(" ")) {
+        // If filter_name has a space, split into first_name and last_name
+        const [firstName, lastName] = filterName.split(" ");
+        
+        filterwhere = {
+            ...filterwhere,
+            [Op.or]: [
+                { first_name: { [Op.like]: `%${firstName}%` } }, // First part in first_name
+                { last_name: { [Op.like]: `%${lastName}%` } },   // Second part in last_name
+            ]
+        };
+    } else {
+        // If no space, match filter_name against first_name or email
+        filterwhere = {
+            ...filterwhere,
+            [Op.or]: [
+                { first_name: { [Op.like]: `%${filterName}%` } }, // Name condition
+                { email: { [Op.like]: `%${filterName}%` } }, // Email condition
+            ]
+        };
+    }
+
+    // Proceed with your query, adding filterwhere to the query conditions
+}
 
 
 	if (req.query.hasOwnProperty("filter_course")) {
