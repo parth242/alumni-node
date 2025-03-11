@@ -51,6 +51,7 @@ const Institute_1 = __importStar(require("../models/Institute"));
 const Notification_1 = __importStar(require("../models/Notification"));
 const UserGroup_1 = __importStar(require("../models/UserGroup"));
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const Group_1 = __importStar(require("../models/Group"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const feedRouter = express_1.default.Router();
@@ -110,6 +111,7 @@ feedRouter.get('/', auth_1.auth, async (req, res) => {
     (0, Feed_1.initializeFeedModel)((0, db_1.getSequelize)());
     (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
     (0, Category_1.initializeCategoryModel)((0, db_1.getSequelize)());
+    (0, Group_1.initializeGroupModel)((0, db_1.getSequelize)());
     (0, FeedComment_1.initializeFeedCommentModel)((0, db_1.getSequelize)());
     FeedComment_1.default.belongsTo(User_1.default, { foreignKey: 'user_id', targetKey: 'id' });
     console.log("req", req.body);
@@ -117,6 +119,8 @@ feedRouter.get('/', auth_1.auth, async (req, res) => {
     Feed_1.default.belongsTo(User_1.default, { foreignKey: 'user_id', targetKey: 'id' });
     Category_1.default.hasMany(Feed_1.default, { foreignKey: 'category_id' });
     Feed_1.default.belongsTo(Category_1.default, { foreignKey: 'category_id', targetKey: 'id' });
+    Group_1.default.hasMany(Feed_1.default, { foreignKey: 'group_id' });
+    Feed_1.default.belongsTo(Group_1.default, { foreignKey: 'group_id', targetKey: 'id' });
     Feed_1.default.hasMany(FeedComment_1.default, { foreignKey: 'feed_id' });
     FeedComment_1.default.belongsTo(Feed_1.default, { foreignKey: 'feed_id', targetKey: 'id' });
     const institute_id = req.instituteId;
@@ -165,6 +169,11 @@ feedRouter.get('/', auth_1.auth, async (req, res) => {
                 attributes: ['category_name'] // Fetch the skill_name                
             },
             {
+                model: Group_1.default,
+                required: false, // Ensures only Jobs with JobSkills are returned
+                attributes: ['group_name'] // Fetch the skill_name                
+            },
+            {
                 model: FeedComment_1.default,
                 required: false, // Ensures only Jobs with JobSkills are returned
                 attributes: ['id'] // Fetch the skill_name                
@@ -186,6 +195,10 @@ feedRouter.get('/', auth_1.auth, async (req, res) => {
             {
                 model: Category_1.default,
                 required: false, // Ensures only Jobs with JobSkills are returned                            
+            },
+            {
+                model: Group_1.default,
+                required: false, // Ensures only Jobs with JobSkills are returned                             
             },
             {
                 model: FeedComment_1.default,

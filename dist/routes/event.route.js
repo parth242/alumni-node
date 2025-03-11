@@ -125,8 +125,9 @@ eventRouter.get('/', auth_1.auth, async (req, res) => {
             // Get the start and end of the current day (for 'Present' condition)
             const startOfToday = new Date(currentDate.setHours(0, 0, 0, 0));
             const endOfToday = new Date(currentDate.setHours(23, 59, 59, 999));
-            if (filterDate == 'Future') {
+            if (filterDate === 'Upcoming') {
                 if (!isNaN(currentDate.getTime())) {
+                    console;
                     whereCondition.event_date = { [sequelize_1.Op.gt]: currentDate };
                 }
             }

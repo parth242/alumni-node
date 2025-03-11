@@ -118,8 +118,9 @@ eventRouter.get('/', auth, async (req, res) => {
             const startOfToday = new Date(currentDate.setHours(0, 0, 0, 0));
             const endOfToday = new Date(currentDate.setHours(23, 59, 59, 999));
 
-            if(filterDate=='Upcoming'){               
+            if(filterDate === 'Upcoming'){               
                 if (!isNaN(currentDate.getTime())) {
+                    console
                 whereCondition.event_date = { [Op.gt]: currentDate };
                 }
             } else if (filterDate === 'Past') {

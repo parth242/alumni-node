@@ -13,6 +13,7 @@ import Institutes , { initializeInstitutesModel } from '../models/Institute';
 import Notification, { initializeNotificationModel } from '../models/Notification';
 import UserGroup, { initializeUGroupModel } from '../models/UserGroup';
 import nodemailer from "nodemailer";
+import Groups, { initializeGroupModel } from '../models/Group';
 
 // import CryptoJS from "crypto-js";
 
@@ -97,6 +98,7 @@ feedRouter.get('/', auth, async (req, res) => {
     initializeFeedModel(getSequelize());
     initializeUserModel(getSequelize());
     initializeCategoryModel(getSequelize());
+    initializeGroupModel(getSequelize());
     initializeFeedCommentModel(getSequelize());
     
    
@@ -107,6 +109,9 @@ feedRouter.get('/', auth, async (req, res) => {
 
     Categorys.hasMany(Feeds, {foreignKey: 'category_id'});
     Feeds.belongsTo(Categorys, {foreignKey: 'category_id', targetKey: 'id'});
+
+    Groups.hasMany(Feeds, {foreignKey: 'group_id'});
+    Feeds.belongsTo(Groups, {foreignKey: 'group_id', targetKey: 'id'});
 
     Feeds.hasMany(FeedComments, {foreignKey: 'feed_id'});
     FeedComments.belongsTo(Feeds, {foreignKey: 'feed_id', targetKey: 'id'});
@@ -175,6 +180,11 @@ feedRouter.get('/', auth, async (req, res) => {
                 attributes: ['category_name'] // Fetch the skill_name                
             },
             {
+                model: Groups,
+                required: false, // Ensures only Jobs with JobSkills are returned
+                attributes: ['group_name'] // Fetch the skill_name                
+            },
+            {
                 model: FeedComments,
                 required: false, // Ensures only Jobs with JobSkills are returned
                 attributes: ['id'] // Fetch the skill_name                
@@ -197,6 +207,10 @@ feedRouter.get('/', auth, async (req, res) => {
             {
                 model: Categorys,
                 required: false, // Ensures only Jobs with JobSkills are returned                            
+            },
+            {
+                model: Groups,
+                required: false, // Ensures only Jobs with JobSkills are returned                             
             },
             {
                 model: FeedComments,
