@@ -47,7 +47,9 @@ const settingRouter = express_1.default.Router();
 settingRouter.get('/', async (req, res) => {
     (0, Setting_1.initializeSettingModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
+    const instituteId = req.instituteId;
     const setting = await Setting_1.default.findOne({
+        where: { institute_id: instituteId },
         order: [['id', 'DESC']],
         offset: 0, // Set the offset
         limit: 1
@@ -100,8 +102,10 @@ settingRouter.post('/create', async (req, res) => {
     try {
         const { id, collage_name, collage_logo, contact_name, contact_mobileno } = req.body;
         console.log("req.body", req.body);
+        const institute_id = req.instituteId;
         let settingrecord;
         settingrecord = await Setting_1.default.findOne({
+            where: { institute_id: institute_id },
             order: [['id', 'DESC']],
             offset: 0, // Set the offset
             limit: 1
@@ -120,6 +124,7 @@ settingRouter.post('/create', async (req, res) => {
         }
         else {
             const setting = await Setting_1.default.create({
+                institute_id,
                 collage_name,
                 collage_logo,
                 contact_name,

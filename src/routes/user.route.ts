@@ -1694,7 +1694,7 @@ userRouter.post("/create", async (req, res) => {
 
 		console.log("institutedata",institutedata);
 
-		const yeargroupname = "Batch of "+end_year;
+		
 
 
 		let user: Users | null;
@@ -1784,8 +1784,9 @@ userRouter.post("/create", async (req, res) => {
 						status,
 						about_me,
 					});
-
-
+					if(is_alumni==1){
+						
+					const yeargroupname = "Batch of "+end_year;
 					const university = institutedata?.institute_name;
 					const user_id = user.id;
 					const degree = "";
@@ -1942,7 +1943,7 @@ userRouter.post("/create", async (req, res) => {
 								console.error(`Failed to send email to ${email}:`, err);
 							}
 
-
+						}
 					res.json({ message: "User Created", data: user });
 				}
 			});

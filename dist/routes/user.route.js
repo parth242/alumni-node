@@ -1383,7 +1383,6 @@ userRouter.post("/create", async (req, res) => {
         const institute_id = req.instituteId;
         const institutedata = await Institute_1.default.findOne({ where: { id: institute_id } });
         console.log("institutedata", institutedata);
-        const yeargroupname = "Batch of " + end_year;
         let user;
         if (id) {
             user = await User_1.default.findOne({
@@ -1469,139 +1468,142 @@ userRouter.post("/create", async (req, res) => {
                         status,
                         about_me,
                     });
-                    const university = institutedata?.institute_name;
-                    const user_id = user.id;
-                    const degree = "";
-                    const is_additional = 0;
-                    const start_year = 0;
-                    const location = "";
-                    const alumnimessage = await UserEducation_1.default.create({
-                        user_id,
-                        university,
-                        degree,
-                        course_id,
-                        department_id,
-                        specialization,
-                        is_additional,
-                        start_year,
-                        end_year,
-                        location
-                    });
-                    const adminuser = await User_1.default.findOne({ where: { is_admin: 1, status: "active", institute_id: institute_id } });
-                    const group = await Group_1.default.findOne({ where: { group_name: yeargroupname, institute_id: institute_id } });
-                    const coursename = await Course_1.default.findOne({ where: { id: course_id } });
-                    const departname = await Department_1.default.findOne({ where: { id: department_id } });
-                    let coursegroupname;
-                    let depart_name;
-                    if (departname) {
-                        coursegroupname = coursename?.course_shortcode + " " + end_year + ", " + departname?.department_shortcode;
-                        depart_name = departname.department_name;
-                    }
-                    else {
-                        coursegroupname = coursename?.course_shortcode + " " + end_year;
-                        depart_name = '';
-                    }
-                    const coursegroup = await Group_1.default.findOne({ where: { group_name: coursegroupname, institute_id: institute_id } });
-                    if (group) {
-                        var group_id = group.id;
-                        const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
-                        if (!usergroupdata) {
+                    if (is_alumni == 1) {
+                        const yeargroupname = "Batch of " + end_year;
+                        const university = institutedata?.institute_name;
+                        const user_id = user.id;
+                        const degree = "";
+                        const is_additional = 0;
+                        const start_year = 0;
+                        const location = "";
+                        const alumnimessage = await UserEducation_1.default.create({
+                            user_id,
+                            university,
+                            degree,
+                            course_id,
+                            department_id,
+                            specialization,
+                            is_additional,
+                            start_year,
+                            end_year,
+                            location
+                        });
+                        const adminuser = await User_1.default.findOne({ where: { is_admin: 1, status: "active", institute_id: institute_id } });
+                        const group = await Group_1.default.findOne({ where: { group_name: yeargroupname, institute_id: institute_id } });
+                        const coursename = await Course_1.default.findOne({ where: { id: course_id } });
+                        const departname = await Department_1.default.findOne({ where: { id: department_id } });
+                        let coursegroupname;
+                        let depart_name;
+                        if (departname) {
+                            coursegroupname = coursename?.course_shortcode + " " + end_year + ", " + departname?.department_shortcode;
+                            depart_name = departname.department_name;
+                        }
+                        else {
+                            coursegroupname = coursename?.course_shortcode + " " + end_year;
+                            depart_name = '';
+                        }
+                        const coursegroup = await Group_1.default.findOne({ where: { group_name: coursegroupname, institute_id: institute_id } });
+                        if (group) {
+                            var group_id = group.id;
+                            const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
+                            if (!usergroupdata) {
+                                const usergroup = await UserGroup_1.default.create({
+                                    user_id,
+                                    group_id,
+                                });
+                            }
+                        }
+                        else {
+                            const group_name = yeargroupname;
+                            const groupdata = await Group_1.default.create({
+                                institute_id,
+                                group_name
+                            });
+                            var group_id = groupdata.id;
                             const usergroup = await UserGroup_1.default.create({
                                 user_id,
                                 group_id,
                             });
                         }
-                    }
-                    else {
-                        const group_name = yeargroupname;
-                        const groupdata = await Group_1.default.create({
-                            institute_id,
-                            group_name
-                        });
-                        var group_id = groupdata.id;
-                        const usergroup = await UserGroup_1.default.create({
-                            user_id,
-                            group_id,
-                        });
-                    }
-                    if (coursegroup) {
-                        var group_id = coursegroup.id;
-                        const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
-                        if (!usergroupdata) {
+                        if (coursegroup) {
+                            var group_id = coursegroup.id;
+                            const usergroupdata = await UserGroup_1.default.findOne({ where: { user_id: user_id, group_id: group_id } });
+                            if (!usergroupdata) {
+                                const usergroup = await UserGroup_1.default.create({
+                                    user_id,
+                                    group_id,
+                                });
+                            }
+                        }
+                        else {
+                            const group_name = coursegroupname;
+                            const groupdata = await Group_1.default.create({
+                                institute_id,
+                                group_name
+                            });
+                            var group_id = groupdata.id;
                             const usergroup = await UserGroup_1.default.create({
                                 user_id,
                                 group_id,
                             });
                         }
-                    }
-                    else {
-                        const group_name = coursegroupname;
-                        const groupdata = await Group_1.default.create({
-                            institute_id,
-                            group_name
-                        });
-                        var group_id = groupdata.id;
-                        const usergroup = await UserGroup_1.default.create({
-                            user_id,
-                            group_id,
-                        });
-                    }
-                    const transporter = nodemailer_1.default.createTransport({
-                        service: "gmail",
-                        auth: {
-                            user: process.env.EMAIL_USER,
-                            pass: process.env.EMAIL_PASS,
-                        },
-                    });
-                    const notFoundEmails = [];
-                    // Use Promise.all() to send emails in parallel
-                    let subject;
-                    let subjectAdmin;
-                    subject = "Welcome to " + institutedata?.institute_name;
-                    subjectAdmin = "New Alumni Registered";
-                    try {
-                        const dynamicValues = {
-                            "[User Name]": first_name + " " + last_name,
-                            "[Your Company Name]": institutedata?.institute_name,
-                            "[Year]": new Date().getFullYear(),
-                            "[Email]": email,
-                            "[Course Name]": coursename?.course_name,
-                            "[Department Name]": depart_name,
-                            "[Batch End Year]": end_year,
-                        };
-                        const emailTemplate = emailtemplate?.alumni_register_mail;
-                        const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
-                            .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
-                            .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-                        const emailAdminTemplate = emailtemplate?.alumni_register_mail_admin;
-                        const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
-                            .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
-                            .replace(/\[Email\]/g, dynamicValues["[Email]"])
-                            .replace(/\[Course Name\]/g, dynamicValues["[Course Name]"])
-                            .replace(/\[Department Name\]/g, dynamicValues["[Department Name]"])
-                            .replace(/\[Batch End Year\]/g, dynamicValues["[Batch End Year]"])
-                            .replace(/\[Year\]/g, dynamicValues["[Year]"]);
-                        await transporter.sendMail({
-                            from: process.env.EMAIL_USER,
-                            to: email,
-                            subject: subject,
-                            html: finalHtml,
-                            headers: {
-                                'Content-Type': 'text/html; charset=UTF-8',
+                        const transporter = nodemailer_1.default.createTransport({
+                            service: "gmail",
+                            auth: {
+                                user: process.env.EMAIL_USER,
+                                pass: process.env.EMAIL_PASS,
                             },
                         });
-                        await transporter.sendMail({
-                            from: process.env.EMAIL_USER,
-                            to: adminuser?.email,
-                            subject: subjectAdmin,
-                            html: finalAdminHtml,
-                            headers: {
-                                'Content-Type': 'text/html; charset=UTF-8',
-                            },
-                        });
-                    }
-                    catch (err) {
-                        console.error(`Failed to send email to ${email}:`, err);
+                        const notFoundEmails = [];
+                        // Use Promise.all() to send emails in parallel
+                        let subject;
+                        let subjectAdmin;
+                        subject = "Welcome to " + institutedata?.institute_name;
+                        subjectAdmin = "New Alumni Registered";
+                        try {
+                            const dynamicValues = {
+                                "[User Name]": first_name + " " + last_name,
+                                "[Your Company Name]": institutedata?.institute_name,
+                                "[Year]": new Date().getFullYear(),
+                                "[Email]": email,
+                                "[Course Name]": coursename?.course_name,
+                                "[Department Name]": depart_name,
+                                "[Batch End Year]": end_year,
+                            };
+                            const emailTemplate = emailtemplate?.alumni_register_mail;
+                            const finalHtml = emailTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
+                                .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
+                                .replace(/\[Year\]/g, dynamicValues["[Year]"]);
+                            const emailAdminTemplate = emailtemplate?.alumni_register_mail_admin;
+                            const finalAdminHtml = emailAdminTemplate.replace(/\[User Name\]/g, dynamicValues["[User Name]"])
+                                .replace(/\[Your Company Name\]/g, dynamicValues["[Your Company Name]"])
+                                .replace(/\[Email\]/g, dynamicValues["[Email]"])
+                                .replace(/\[Course Name\]/g, dynamicValues["[Course Name]"])
+                                .replace(/\[Department Name\]/g, dynamicValues["[Department Name]"])
+                                .replace(/\[Batch End Year\]/g, dynamicValues["[Batch End Year]"])
+                                .replace(/\[Year\]/g, dynamicValues["[Year]"]);
+                            await transporter.sendMail({
+                                from: process.env.EMAIL_USER,
+                                to: email,
+                                subject: subject,
+                                html: finalHtml,
+                                headers: {
+                                    'Content-Type': 'text/html; charset=UTF-8',
+                                },
+                            });
+                            await transporter.sendMail({
+                                from: process.env.EMAIL_USER,
+                                to: adminuser?.email,
+                                subject: subjectAdmin,
+                                html: finalAdminHtml,
+                                headers: {
+                                    'Content-Type': 'text/html; charset=UTF-8',
+                                },
+                            });
+                        }
+                        catch (err) {
+                            console.error(`Failed to send email to ${email}:`, err);
+                        }
                     }
                     res.json({ message: "User Created", data: user });
                 }
