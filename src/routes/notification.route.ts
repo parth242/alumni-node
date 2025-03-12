@@ -36,7 +36,7 @@ notificationRouter.get('/', async (req, res) => {
 		};
 	}
 
-    const notification = await Notifications.findAll({where: filterwhere});
+    const notification = await Notifications.findAll({where: filterwhere,order: [["id", "DESC"]],});
     res.status(200).json({ total_records: 10, data: notification });
 
 });

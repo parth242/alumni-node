@@ -58,7 +58,7 @@ notificationRouter.get('/', async (req, res) => {
             receiver_id: req.query.user_id,
         };
     }
-    const notification = await Notification_1.default.findAll({ where: filterwhere });
+    const notification = await Notification_1.default.findAll({ where: filterwhere, order: [["id", "DESC"]], });
     res.status(200).json({ total_records: 10, data: notification });
 });
 notificationRouter.get('/:id', auth_1.auth, async (req, res) => {

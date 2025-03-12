@@ -16,7 +16,8 @@ const roleRouter = express.Router();
 roleRouter.get('/', auth, async (req, res) => {
     initializeRoleModel(getSequelize());
     console.log("req", req.body);
-    const role = await Roles.findAll();
+    const instituteId = (req as any).instituteId;
+    const role = await Roles.findAll({where: {institute_id: instituteId}});
     res.status(200).json({ total_records: 10, data: role });
 
 });
@@ -196,13 +197,14 @@ roleRouter.post('/create', async (req, res) => {
             menu                   
         } = req.body;
         console.log("req.body", req.body);
+        const institute_id = (req as any).instituteId;
 
         let role: Roles | null;
         if (id) {
-            role = await Roles.findOne({ where: { name: name, id: { $not: id } } });
+            role = await Roles.findOne({ where: { name: name, institute_id: institute_id, id: { $not: id } } });
             console.log("user>>>>>>>>>>>>>>>>", role);
         } else {
-            role = await Roles.findOne({ where: { name: name } });
+            role = await Roles.findOne({ where: { name: name, institute_id: institute_id } });
         }
         if (role) {
             res.status(500).json({ message: "Role already exist." });
@@ -236,6 +238,7 @@ roleRouter.post('/create', async (req, res) => {
                                
 
                     const role = await Roles.create({
+                        institute_id,
                         name,
                         status
                     });
