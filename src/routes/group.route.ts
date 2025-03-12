@@ -14,6 +14,28 @@ import { Op, WhereOptions  } from 'sequelize';
 
 const groupRouter = express.Router();
 
+groupRouter.get('/newsgroup', auth, async (req, res) => {
+    
+    initializeGroupModel(getSequelize());
+    const institute_id = (req as any).instituteId;    
+    
+       
+    let whereCondition: WhereOptions<any> = {}; 
+
+       
+
+    const usergroup = await Groups.findAll({
+        where:{'institute_id':institute_id},
+        order: [['id', 'ASC']],
+    
+      });
+      
+      
+    
+    res.status(200).json({ total_records: 10, data: usergroup });
+
+});
+
 groupRouter.get('/', auth, async (req, res) => {
     initializeUGroupModel(getSequelize());
     initializeGroupModel(getSequelize());

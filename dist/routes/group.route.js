@@ -45,6 +45,16 @@ const Group_1 = __importStar(require("../models/Group"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const groupRouter = express_1.default.Router();
+groupRouter.get('/newsgroup', auth_1.auth, async (req, res) => {
+    (0, Group_1.initializeGroupModel)((0, db_1.getSequelize)());
+    const institute_id = req.instituteId;
+    let whereCondition = {};
+    const usergroup = await Group_1.default.findAll({
+        where: { 'institute_id': institute_id },
+        order: [['id', 'ASC']],
+    });
+    res.status(200).json({ total_records: 10, data: usergroup });
+});
 groupRouter.get('/', auth_1.auth, async (req, res) => {
     (0, UserGroup_1.initializeUGroupModel)((0, db_1.getSequelize)());
     (0, Group_1.initializeGroupModel)((0, db_1.getSequelize)());
