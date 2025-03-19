@@ -28,7 +28,9 @@ app.use(
 );
 
 app.use(async (req, res, next) => {
-	const siteUrl = req.headers.host;
+	
+	const siteUrl = req.headers.origin; 
+	
 
 	try {
 		console.log("fetching host url", siteUrl);
