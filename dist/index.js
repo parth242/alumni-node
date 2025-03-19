@@ -23,12 +23,14 @@ app.use((0, cors_1.default)({
         "http://localhost:3001",
         "http://localhost:3002",
         "https://alumni-react.onrender.com",
+        "https://alumni.spori.pro",
+        "https://alumni.sporitech.com",
     ], // Replace with your client app's URL
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
 }));
 app.use(async (req, res, next) => {
-    const siteUrl = req.headers.host;
+    const siteUrl = req.headers.origin;
     try {
         console.log("fetching host url", siteUrl);
         let query = "SELECT * FROM institute_sitedetails WHERE ";
