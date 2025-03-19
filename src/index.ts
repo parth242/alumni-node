@@ -21,6 +21,8 @@ app.use(
 			"http://localhost:3001",
 			"http://localhost:3002",
 			"https://alumni-react.onrender.com",
+			"https://alumni.spori.pro",
+			"https://alumni.sporitech.com",
 		], // Replace with your client app's URL
 		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
 		credentials: true, // Enable credentials (e.g., cookies) for cross-origin requests
