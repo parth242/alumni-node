@@ -50,6 +50,10 @@ function initializeSubmenuModel(sequelize) {
                 type: sequelize_1.DataTypes.INTEGER,
                 defaultValue: 1,
             },
+            is_support_menu: {
+                type: sequelize_1.DataTypes.INTEGER,
+                defaultValue: 0,
+            },
             createdAt: {
                 field: "created_on",
                 type: sequelize_1.DataTypes.DATE,

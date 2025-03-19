@@ -12,6 +12,7 @@ class Submenus extends Model {
     public icon!: string;
     public menu!: number;
     public ordering!: number;
+    public is_support_menu!: number;
 }
 
 let isUserModelInitialized = false;
@@ -61,6 +62,10 @@ Submenus.init(
         ordering: {
             type: DataTypes.INTEGER,
             defaultValue: 1,
+        },
+        is_support_menu: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
         },
         createdAt: {
             field: "created_on",
