@@ -168,7 +168,7 @@ slideshowRouter.get('/status/:id', auth_1.auth, async (req, res) => {
 slideshowRouter.post('/create', async (req, res) => {
     (0, Slideshow_1.initializeSlideshowModel)((0, db_1.getSequelize)());
     try {
-        const { id, slide_title, slide_image, status } = req.body;
+        const { id, slide_title, slide_image, slide_description, status } = req.body;
         console.log("req.body", req.body);
         const institute_id = req.instituteId;
         let slideshow;
@@ -187,6 +187,7 @@ slideshowRouter.post('/create', async (req, res) => {
             const slideshow = await Slideshow_1.default.update({
                 slide_title,
                 slide_image,
+                slide_description,
                 status
             }, {
                 where: { id: id }
@@ -198,6 +199,7 @@ slideshowRouter.post('/create', async (req, res) => {
                 institute_id,
                 slide_title,
                 slide_image,
+                slide_description,
                 status
             });
             res.json({ message: "Slideshow Created", data: slideshow });

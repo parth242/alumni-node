@@ -25,6 +25,10 @@ function initializeSlideshowModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
             },
+            slide_description: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
             status: {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,

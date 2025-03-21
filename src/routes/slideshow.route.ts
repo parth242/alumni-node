@@ -165,6 +165,7 @@ slideshowRouter.post('/create', async (req, res) => {
             id,
             slide_title,
             slide_image,
+            slide_description,
             status                     
         } = req.body;
         console.log("req.body", req.body);
@@ -187,6 +188,7 @@ slideshowRouter.post('/create', async (req, res) => {
                 {
                     slide_title,
                     slide_image,
+                    slide_description,
                     status                 
                 },
                 {
@@ -201,6 +203,7 @@ slideshowRouter.post('/create', async (req, res) => {
                         institute_id,
                         slide_title,
                         slide_image,
+                        slide_description,
                         status
                     });
                     res.json({ message: "Slideshow Created", data: slideshow });
