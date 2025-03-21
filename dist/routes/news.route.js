@@ -45,7 +45,7 @@ const sequelize_1 = require("sequelize");
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const newsRouter = express_1.default.Router();
-newsRouter.get('/', auth_1.auth, async (req, res) => {
+newsRouter.get('/', async (req, res) => {
     (0, News_1.initializeNewsModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
     const institute_id = req.instituteId;

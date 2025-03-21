@@ -14,7 +14,7 @@ import { Op,WhereOptions,Sequelize } from 'sequelize';
 
 const newsRouter = express.Router();
 
-newsRouter.get('/', auth, async (req, res) => {
+newsRouter.get('/', async (req, res) => {
     initializeNewsModel(getSequelize());
     console.log("req", req.body);
     const institute_id = (req as any).instituteId;
