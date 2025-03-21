@@ -5,7 +5,7 @@ import { catchError } from '../common/functions';
 import { auth } from '../middleware/auth';
 import { Op,WhereOptions,Sequelize } from 'sequelize';
 import Users, { initializeUserModel } from "../models/User";
-import JobSkill, { initializeJobSkillModel } from '../models/JobSkill';
+import JobSkill, { initializeJobSkillModel } from '../models/JobSkill'; 
 import JobArea, { initializeJobAreaModel } from '../models/JobArea';
 import Notification, { initializeNotificationModel } from '../models/Notification';
 import Institutes , { initializeInstitutesModel } from '../models/Institute';
@@ -20,7 +20,7 @@ import nodemailer from "nodemailer";
 
 const jobRouter = express.Router();
 
-jobRouter.get('/', auth, async (req, res) => {
+jobRouter.get('/', async (req, res) => {
     initializeJobModel(getSequelize());
     initializeJobSkillModel(getSequelize());
     initializeJobAreaModel(getSequelize());

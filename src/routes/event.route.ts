@@ -43,7 +43,7 @@ const upload = multer({
 
 const eventRouter = express.Router();
 
-eventRouter.get('/', auth, async (req, res) => {
+eventRouter.get('/', async (req, res) => {
     initializeEventModel(getSequelize());
     console.log("req", req.body);
     const institute_id = (req as any).instituteId;

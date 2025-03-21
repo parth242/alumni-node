@@ -317,6 +317,46 @@ userRouter.get("/isalumni=:isalumninew/", auth_1.auth, async (req, res) => {
     });
     res.status(200).json({ total_records: totalcount, data: formattedUsers });
 });
+userRouter.get("/homealumnis", async (req, res) => {
+    (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
+    const institute_id = req.instituteId;
+    let whereCondition = {};
+    if (institute_id > 0) {
+        whereCondition.institute_id = institute_id;
+    }
+    whereCondition.is_alumni = 1;
+    whereCondition.status = "active";
+    let pageNumber;
+    let pageSize;
+    let offset;
+    if (req.query.hasOwnProperty("page_number")) {
+        pageNumber = req.query.page_number; // Page number
+    }
+    else {
+        pageNumber = 1;
+    }
+    if (req.query.hasOwnProperty("page_size")) {
+        pageSize = req.query.page_size; // Page size
+    }
+    else {
+        pageSize = 10; // Page size
+    }
+    offset = (Number(pageNumber) - 1) * Number(pageSize); // Calculate offset based on page number and page size
+    const users = await User_1.default.findAll({
+        attributes: [
+            "id",
+            "first_name",
+            "last_name",
+            "nickname",
+            "image"
+        ],
+        where: whereCondition,
+        order: [["id", "DESC"]],
+        offset: offset, // Set the offset
+        limit: Number(pageSize), // Set the limit to the page size
+    });
+    res.status(200).json({ total_records: 10, data: users });
+});
 userRouter.get("/group_id=:group_id/", auth_1.auth, async (req, res) => {
     (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
     (0, UserEducation_1.initializeUEducationModel)((0, db_1.getSequelize)());

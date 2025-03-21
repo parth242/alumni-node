@@ -69,7 +69,7 @@ const upload = (0, multer_1.default)({
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const eventRouter = express_1.default.Router();
-eventRouter.get('/', auth_1.auth, async (req, res) => {
+eventRouter.get('/', async (req, res) => {
     (0, Event_1.initializeEventModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
     const institute_id = req.instituteId;

@@ -53,7 +53,7 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 // import CryptoJS from "crypto-js";
 // const upload = multer({ dest: 'uploads/' })
 const jobRouter = express_1.default.Router();
-jobRouter.get('/', auth_1.auth, async (req, res) => {
+jobRouter.get('/', async (req, res) => {
     (0, Job_1.initializeJobModel)((0, db_1.getSequelize)());
     (0, JobSkill_1.initializeJobSkillModel)((0, db_1.getSequelize)());
     (0, JobArea_1.initializeJobAreaModel)((0, db_1.getSequelize)());
