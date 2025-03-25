@@ -139,6 +139,7 @@ const emailtemplate_route_1 = __importDefault(require("./routes/emailtemplate.ro
 const institute_route_1 = __importDefault(require("./routes/institute.route"));
 const notification_route_1 = __importDefault(require("./routes/notification.route"));
 const alumnimessage_route_1 = __importDefault(require("./routes/alumnimessage.route"));
+const gallery_route_1 = __importDefault(require("./routes/gallery.route"));
 app.use(body_parser_1.default.urlencoded({ extended: false }));
 app.use(body_parser_1.default.json());
 console.log("express.static(__dirname + '/uploads')", __dirname, express_1.default.static(__dirname + "/uploads"));
@@ -187,6 +188,7 @@ app.use("/api/v1/emailtemplate", emailtemplate_route_1.default);
 app.use("/api/v1/institute", institute_route_1.default);
 app.use("/api/v1/alumnimessage", alumnimessage_route_1.default);
 app.use("/api/v1/notification", notification_route_1.default);
+app.use("/api/v1/gallery", gallery_route_1.default);
 // Wildcard route to catch all other requests
 app.all("*", (req, res) => {
     res.status(404).send("Route not found");

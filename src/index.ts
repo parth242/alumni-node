@@ -163,6 +163,7 @@ import emailtemplateRouter from "./routes/emailtemplate.route";
 import instituteRouter from "./routes/institute.route";
 import notificationRouter from "./routes/notification.route";
 import alumnimessageRouter from "./routes/alumnimessage.route";
+import galleryRouter from "./routes/gallery.route";
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -222,6 +223,7 @@ app.use("/api/v1/emailtemplate", emailtemplateRouter);
 app.use("/api/v1/institute", instituteRouter);
 app.use("/api/v1/alumnimessage", alumnimessageRouter);
 app.use("/api/v1/notification", notificationRouter);
+app.use("/api/v1/gallery", galleryRouter);
 
 
 // Wildcard route to catch all other requests
