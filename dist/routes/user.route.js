@@ -342,20 +342,36 @@ userRouter.get("/homealumnis", async (req, res) => {
         pageSize = 10; // Page size
     }
     offset = (Number(pageNumber) - 1) * Number(pageSize); // Calculate offset based on page number and page size
-    const users = await User_1.default.findAll({
-        attributes: [
-            "id",
-            "first_name",
-            "last_name",
-            "nickname",
-            "image"
-        ],
-        where: whereCondition,
-        order: [["id", "DESC"]],
-        offset: offset, // Set the offset
-        limit: Number(pageSize), // Set the limit to the page size
-    });
-    res.status(200).json({ total_records: 10, data: users });
+    if (pageSize == 0) {
+        const users = await User_1.default.findAll({
+            attributes: [
+                "id",
+                "first_name",
+                "last_name",
+                "nickname",
+                "image"
+            ],
+            where: whereCondition,
+            order: [["id", "DESC"]],
+        });
+        res.status(200).json({ total_records: 10, data: users });
+    }
+    else {
+        const users = await User_1.default.findAll({
+            attributes: [
+                "id",
+                "first_name",
+                "last_name",
+                "nickname",
+                "image"
+            ],
+            where: whereCondition,
+            order: [["id", "DESC"]],
+            offset: offset, // Set the offset
+            limit: Number(pageSize), // Set the limit to the page size
+        });
+        res.status(200).json({ total_records: 10, data: users });
+    }
 });
 userRouter.get("/group_id=:group_id/", auth_1.auth, async (req, res) => {
     (0, User_1.initializeUserModel)((0, db_1.getSequelize)());

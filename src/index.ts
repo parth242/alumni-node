@@ -164,6 +164,7 @@ import instituteRouter from "./routes/institute.route";
 import notificationRouter from "./routes/notification.route";
 import alumnimessageRouter from "./routes/alumnimessage.route";
 import galleryRouter from "./routes/gallery.route";
+import testimonialRouter from "./routes/testimonial.route";
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -224,6 +225,7 @@ app.use("/api/v1/institute", instituteRouter);
 app.use("/api/v1/alumnimessage", alumnimessageRouter);
 app.use("/api/v1/notification", notificationRouter);
 app.use("/api/v1/gallery", galleryRouter);
+app.use("/api/v1/testimonial", testimonialRouter);
 
 
 // Wildcard route to catch all other requests
