@@ -326,6 +326,12 @@ userRouter.get("/homealumnis", async (req, res) => {
     }
     whereCondition.is_alumni = 1;
     whereCondition.status = "active";
+    whereCondition.image = {
+        [sequelize_1.Op.and]: [
+            { [sequelize_1.Op.not]: null },
+            { [sequelize_1.Op.ne]: "" }
+        ]
+    };
     let pageNumber;
     let pageSize;
     let offset;

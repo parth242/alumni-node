@@ -354,6 +354,13 @@ userRouter.get("/homealumnis", async (req, res) => {
 
 	whereCondition.status = "active";
 
+	whereCondition.image = {
+		[Op.and]: [
+			{ [Op.not]: null },
+			{ [Op.ne]: "" }
+		]
+	};
+
 	let pageNumber;
 	let pageSize;
 	let offset;
