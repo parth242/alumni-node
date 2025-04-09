@@ -1,5 +1,6 @@
 import express from 'express';
 import Submenus, { initializeSubmenuModel } from '../models/Submenu';
+import Homemenus, { initializeHomemenuModel } from '../models/Homemenu';
 import { getSequelize } from '../config/db';
 import RolePermission from '../models/RolePermission';
 import { auth } from '../middleware/auth';
@@ -11,6 +12,36 @@ import { auth } from '../middleware/auth';
 
 
 const submenuRouter = express.Router();
+
+
+
+submenuRouter.get('/headermenu', auth, async (req, res) => {
+    initializeHomemenuModel(getSequelize());
+    console.log("req", req.body);
+    
+    const submenu = await Homemenus.findAll({ where: { menu: 1, action:"View", is_footermenu: 0, mainmodule_id: 0 },order: [['ordering', 'ASC']] });
+    res.status(200).json({ total_records: 10, data: submenu });
+
+});
+
+submenuRouter.get('/mainmodule_id=:mainmoduleid', auth, async (req, res) => {
+    initializeHomemenuModel(getSequelize());
+    console.log("req", req.body);
+    
+    const submenu = await Homemenus.findAll({ where: { menu: 1, action:"View", is_footermenu: 0, mainmodule_id: req.params.mainmoduleid },order: [['ordering', 'ASC']] });
+    const submenuCount = await Homemenus.count({ where: { menu: 1, action:"View", is_footermenu: 0, mainmodule_id: req.params.mainmoduleid } });
+    res.status(200).json({ total_records: submenuCount, data: submenu });
+
+});
+
+submenuRouter.get('/footermenu', auth, async (req, res) => {
+    initializeHomemenuModel(getSequelize());
+    console.log("req", req.body);
+    
+    const submenu = await Homemenus.findAll({ where: { menu: 1, action:"View", is_footermenu: 1 },order: [['ordering', 'ASC']] });
+    res.status(200).json({ total_records: 10, data: submenu });
+
+});
 
 submenuRouter.get('/', auth, async (req, res) => {
     initializeSubmenuModel(getSequelize());
