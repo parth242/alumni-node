@@ -47,20 +47,20 @@ const submenuRouter = express_1.default.Router();
 submenuRouter.get('/headermenu', async (req, res) => {
     (0, Homemenu_1.initializeHomemenuModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_footermenu: 0, mainmodule_id: 0 }, order: [['ordering', 'ASC']] });
+    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_headermenu: 1, mainmodule_id: 0 }, order: [['ordering', 'ASC']] });
     res.status(200).json({ total_records: 10, data: submenu });
 });
 submenuRouter.get('/mainmodule_id=:mainmoduleid', async (req, res) => {
     (0, Homemenu_1.initializeHomemenuModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_footermenu: 0, mainmodule_id: req.params.mainmoduleid }, order: [['ordering', 'ASC']] });
-    const submenuCount = await Homemenu_1.default.count({ where: { menu: 1, action: "View", is_footermenu: 0, mainmodule_id: req.params.mainmoduleid } });
+    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_headermenu: 1, mainmodule_id: req.params.mainmoduleid }, order: [['ordering', 'ASC']] });
+    const submenuCount = await Homemenu_1.default.count({ where: { menu: 1, action: "View", is_headermenu: 1, mainmodule_id: req.params.mainmoduleid } });
     res.status(200).json({ total_records: submenuCount, data: submenu });
 });
 submenuRouter.get('/footermenu', async (req, res) => {
     (0, Homemenu_1.initializeHomemenuModel)((0, db_1.getSequelize)());
     console.log("req", req.body);
-    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_footermenu: 1 }, order: [['ordering', 'ASC']] });
+    const submenu = await Homemenu_1.default.findAll({ where: { menu: 1, action: "View", is_footermenu: 1, mainmodule_id: 0 }, order: [['ordering', 'ASC']] });
     res.status(200).json({ total_records: 10, data: submenu });
 });
 submenuRouter.get('/', auth_1.auth, async (req, res) => {

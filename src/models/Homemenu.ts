@@ -11,7 +11,8 @@ class Homemenus extends Model {
     public page_url!: number;   
     public menu!: number;
     public ordering!: number; 
-    public is_footermenu!: number;    
+    public is_footermenu!: number; 
+    public is_headermenu!: number;    
 }
 
 let isUserModelInitialized = false;
@@ -57,6 +58,10 @@ Homemenus.init(
         ordering: {
             type: DataTypes.INTEGER,
             defaultValue: 1,
+        }, 
+        is_headermenu: {
+            type: DataTypes.INTEGER,
+            defaultValue: 0,
         }, 
         is_footermenu: {
             type: DataTypes.INTEGER,

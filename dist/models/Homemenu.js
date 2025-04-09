@@ -46,6 +46,10 @@ function initializeHomemenuModel(sequelize) {
                 type: sequelize_1.DataTypes.INTEGER,
                 defaultValue: 1,
             },
+            is_headermenu: {
+                type: sequelize_1.DataTypes.INTEGER,
+                defaultValue: 0,
+            },
             is_footermenu: {
                 type: sequelize_1.DataTypes.INTEGER,
                 defaultValue: 0,
