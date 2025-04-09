@@ -15,7 +15,7 @@ const submenuRouter = express.Router();
 
 
 
-submenuRouter.get('/headermenu', auth, async (req, res) => {
+submenuRouter.get('/headermenu', async (req, res) => {
     initializeHomemenuModel(getSequelize());
     console.log("req", req.body);
     
@@ -24,7 +24,7 @@ submenuRouter.get('/headermenu', auth, async (req, res) => {
 
 });
 
-submenuRouter.get('/mainmodule_id=:mainmoduleid', auth, async (req, res) => {
+submenuRouter.get('/mainmodule_id=:mainmoduleid', async (req, res) => {
     initializeHomemenuModel(getSequelize());
     console.log("req", req.body);
     
@@ -34,7 +34,7 @@ submenuRouter.get('/mainmodule_id=:mainmoduleid', auth, async (req, res) => {
 
 });
 
-submenuRouter.get('/footermenu', auth, async (req, res) => {
+submenuRouter.get('/footermenu', async (req, res) => {
     initializeHomemenuModel(getSequelize());
     console.log("req", req.body);
     
