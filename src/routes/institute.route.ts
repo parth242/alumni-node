@@ -20,6 +20,21 @@ instituteRouter.get('/', async (req, res) => {
 
 });
 
+instituteRouter.get('/current', async (req, res) => {
+    initializeInstitutesModel(getSequelize());
+    console.log("req", req.body);
+    const institute_id = (req as any).instituteId;
+    const institute = await Institutes.findOne({ where: { id: institute_id } });
+    const instituteDetails = JSON.parse(JSON.stringify(institute));
+    
+    if (!institute) {
+        res.status(500).json({ message: "Invalid Institute" });
+        return;
+    }
+    res.json({ message: "Institute Details", data: instituteDetails });
+
+});
+
 
 instituteRouter.get('/:id', auth, async (req, res) => {
     initializeInstitutesModel(getSequelize());

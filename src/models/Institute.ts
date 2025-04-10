@@ -7,6 +7,13 @@ class Institutes extends Model {
     public institute_siteurl!: string;
     public university_id!: number;  
     public status!: string;
+    public twitter_url!: string;
+    public facebook_url!: string;
+    public instagram_url!: string;
+    public linkedin_url!: string;
+    public contact_number!: string;
+    public contact_email!: string;
+    public site_address!: string;
     public readonly created_on!: Date;
     public readonly updated_on!: Date;
 }
@@ -41,6 +48,34 @@ export function initializeInstitutesModel(sequelize: Sequelize) {
                 status: {
                     type: DataTypes.STRING,
                     allowNull: false,
+                },
+                twitter_url: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                facebook_url: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                instagram_url: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                linkedin_url: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                contact_number: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                contact_email: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
+                },
+                site_address: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
                 },
                 createdAt: {
                     field: "created_on",

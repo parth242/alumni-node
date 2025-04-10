@@ -33,6 +33,34 @@ function initializeInstitutesModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
             },
+            twitter_url: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            facebook_url: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            instagram_url: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            linkedin_url: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            contact_number: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            contact_email: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
+            site_address: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
             createdAt: {
                 field: "created_on",
                 type: sequelize_1.DataTypes.DATE,
