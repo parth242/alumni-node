@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const BusinessDirectory_1 = __importStar(require("../models/BusinessDirectory"));
 const db_1 = require("../config/db");
+const User_1 = __importStar(require("../models/User"));
 const Industry_1 = __importStar(require("../models/Industry"));
 const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
@@ -51,9 +52,15 @@ const businessdirectoryRouter = express_1.default.Router();
 businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
     (0, BusinessDirectory_1.initializeBusinessDirectoryModel)((0, db_1.getSequelize)());
     (0, Industry_1.initializeIndustryModel)((0, db_1.getSequelize)());
+    (0, User_1.initializeUserModel)((0, db_1.getSequelize)());
     Industry_1.default.hasMany(BusinessDirectory_1.default, { foreignKey: "industry_id" });
     BusinessDirectory_1.default.belongsTo(Industry_1.default, {
         foreignKey: "industry_id",
+        targetKey: "id",
+    });
+    User_1.default.hasMany(BusinessDirectory_1.default, { foreignKey: "user_id" });
+    BusinessDirectory_1.default.belongsTo(User_1.default, {
+        foreignKey: "user_id",
         targetKey: "id",
     });
     const institute_id = req.instituteId;
@@ -93,6 +100,11 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
                 model: Industry_1.default,
                 required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
+            },
+            {
+                model: User_1.default,
+                required: false, // Ensures only Jobs with JobSkills are returned
+                attributes: ["first_name", "last_name", "image"], // Fetch the skill_name
             },
         ],
         where: whereCondition, // Your conditions for filtering BusinessDirectorys

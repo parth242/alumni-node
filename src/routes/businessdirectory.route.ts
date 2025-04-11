@@ -3,7 +3,7 @@ import BusinessDirectorys, {
 	initializeBusinessDirectoryModel,
 } from "../models/BusinessDirectory";
 import { getSequelize } from "../config/db";
-import Users from "../models/User";
+import Users, { initializeUserModel } from "../models/User";
 import Industries, { initializeIndustryModel } from "../models/Industry";
 import { catchError } from "../common/functions";
 import { auth } from "../middleware/auth";
@@ -20,10 +20,17 @@ const businessdirectoryRouter = express.Router();
 businessdirectoryRouter.get("/", auth, async (req, res) => {
 	initializeBusinessDirectoryModel(getSequelize());
 	initializeIndustryModel(getSequelize());
+	initializeUserModel(getSequelize());
 
 	Industries.hasMany(BusinessDirectorys, { foreignKey: "industry_id" });
 	BusinessDirectorys.belongsTo(Industries, {
 		foreignKey: "industry_id",
+		targetKey: "id",
+	});
+
+	Users.hasMany(BusinessDirectorys, { foreignKey: "user_id" });
+	BusinessDirectorys.belongsTo(Users, {
+		foreignKey: "user_id",
 		targetKey: "id",
 	});
 
@@ -74,6 +81,11 @@ businessdirectoryRouter.get("/", auth, async (req, res) => {
 				model: Industries,
 				required: true, // Ensures only Jobs with JobSkills are returned
 				attributes: ["industry_name"], // Fetch the skill_name
+			},
+			{
+				model: Users,
+				required: false, // Ensures only Jobs with JobSkills are returned
+				attributes: ["first_name","last_name","image"], // Fetch the skill_name
 			},
 		],
 		where: whereCondition, // Your conditions for filtering BusinessDirectorys
