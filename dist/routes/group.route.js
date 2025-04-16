@@ -65,14 +65,14 @@ groupRouter.get('/', auth_1.auth, async (req, res) => {
     if (req.query.hasOwnProperty('user_id')) {
         whereCondition.user_id = req.query.user_id;
     }
-    const usergroup = await UserGroup_1.default.findAll({
+    const usergroup = await Group_1.default.findAll({
         include: [{
-                model: Group_1.default,
+                model: UserGroup_1.default,
                 required: true,
-                where: { institute_id: institute_id }
+                where: whereCondition
             },
         ],
-        where: whereCondition,
+        where: { institute_id: institute_id },
         order: [['id', 'ASC']],
     });
     res.status(200).json({ total_records: 10, data: usergroup });

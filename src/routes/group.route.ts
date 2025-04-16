@@ -53,14 +53,14 @@ groupRouter.get('/', auth, async (req, res) => {
        
     }    
 
-    const usergroup = await UserGroup.findAll({
+    const usergroup = await Groups.findAll({
          include: [{
-          model: Groups,
+          model: UserGroup,
           required: true,
-          where: { institute_id : institute_id}
+          where: whereCondition          
         },        
     ],
-    where: whereCondition,
+    where: { institute_id : institute_id},
     order: [['id', 'ASC']],
     
       });
