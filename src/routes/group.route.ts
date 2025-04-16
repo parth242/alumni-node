@@ -25,7 +25,7 @@ groupRouter.get('/newsgroup', auth, async (req, res) => {
        
 
     const usergroup = await Groups.findAll({
-        where:{'institute_id':institute_id},
+        where:{institute_id :institute_id},
         order: [['id', 'ASC']],
     
       });
@@ -56,8 +56,8 @@ groupRouter.get('/', auth, async (req, res) => {
     const usergroup = await UserGroup.findAll({
          include: [{
           model: Groups,
-          required: false,
-          where:{'institute_id':institute_id}
+          required: true,
+          where: { institute_id : institute_id}
         },        
     ],
     where: whereCondition,

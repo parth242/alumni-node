@@ -50,7 +50,7 @@ groupRouter.get('/newsgroup', auth_1.auth, async (req, res) => {
     const institute_id = req.instituteId;
     let whereCondition = {};
     const usergroup = await Group_1.default.findAll({
-        where: { 'institute_id': institute_id },
+        where: { institute_id: institute_id },
         order: [['id', 'ASC']],
     });
     res.status(200).json({ total_records: 10, data: usergroup });
@@ -68,8 +68,8 @@ groupRouter.get('/', auth_1.auth, async (req, res) => {
     const usergroup = await UserGroup_1.default.findAll({
         include: [{
                 model: Group_1.default,
-                required: false,
-                where: { 'institute_id': institute_id }
+                required: true,
+                where: { institute_id: institute_id }
             },
         ],
         where: whereCondition,
