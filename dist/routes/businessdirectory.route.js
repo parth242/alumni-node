@@ -43,7 +43,6 @@ const User_1 = __importStar(require("../models/User"));
 const Industry_1 = __importStar(require("../models/Industry"));
 const functions_1 = require("../common/functions");
 const auth_1 = require("../middleware/auth");
-const sequelize_1 = require("sequelize");
 const Services_1 = __importStar(require("../models/Services"));
 const Products_1 = __importStar(require("../models/Products"));
 // import CryptoJS from "crypto-js";
@@ -70,15 +69,6 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
     let offset;
     if (institute_id > 0) {
         whereCondition.institute_id = institute_id;
-    }
-    if (req.query.hasOwnProperty("user_id")) {
-        const filteruserid = Number(req.query.user_id);
-        if (filteruserid > 0) {
-            const filteruserid = req.query.user_id;
-            whereCondition.user_id = {
-                [sequelize_1.Op.eq]: filteruserid, // For Sequelize or similar ORMs
-            };
-        }
     }
     whereCondition.status = "active";
     if (req.query.hasOwnProperty("page_number")) {
@@ -118,6 +108,10 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
                 model: Industry_1.default,
                 required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
+            },
+            {
+                model: User_1.default,
+                required: false // Ensures only Jobs with JobSkills are returned
             },
         ],
         distinct: true, // Ensures distinct businessdirectory IDs are counted

@@ -49,16 +49,7 @@ businessdirectoryRouter.get("/", auth, async (req, res) => {
 		whereCondition.institute_id = institute_id as string;
 	}
 
-	if (req.query.hasOwnProperty("user_id")) {
-		const filteruserid = Number(req.query.user_id);
-
-		if (filteruserid > 0) {
-			const filteruserid = req.query.user_id;
-			whereCondition.user_id = {
-				[Op.eq]: filteruserid, // For Sequelize or similar ORMs
-			};
-		}
-	}
+	
 	whereCondition.status = "active";
 
 	if (req.query.hasOwnProperty("page_number")) {
@@ -100,6 +91,11 @@ businessdirectoryRouter.get("/", auth, async (req, res) => {
 				model: Industries,
 				required: true, // Ensures only Jobs with JobSkills are returned
 				attributes: ["industry_name"], // Fetch the skill_name
+			},
+			{
+				model: Users,
+				required: false // Ensures only Jobs with JobSkills are returned
+				
 			},
 		],
 		distinct: true, // Ensures distinct businessdirectory IDs are counted

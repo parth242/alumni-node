@@ -5,6 +5,7 @@ class Institutes extends Model {
     public institute_id!: number;  
     public institute_name!: string;
     public institute_siteurl!: string;
+    public institute_logo!: string;
     public university_id!: number;  
     public status!: string;
     public twitter_url!: string;
@@ -40,6 +41,10 @@ export function initializeInstitutesModel(sequelize: Sequelize) {
                 institute_siteurl: {
                     type: DataTypes.STRING,
                     allowNull: false,
+                },
+                institute_logo: {
+                    type: DataTypes.STRING,
+                    allowNull: true,
                 },
                 university_id: {
                     type: DataTypes.INTEGER,

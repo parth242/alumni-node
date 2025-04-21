@@ -25,6 +25,10 @@ function initializeInstitutesModel(sequelize) {
                 type: sequelize_1.DataTypes.STRING,
                 allowNull: false,
             },
+            institute_logo: {
+                type: sequelize_1.DataTypes.STRING,
+                allowNull: true,
+            },
             university_id: {
                 type: sequelize_1.DataTypes.INTEGER,
                 allowNull: false,
