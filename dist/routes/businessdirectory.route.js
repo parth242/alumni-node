@@ -125,6 +125,11 @@ businessdirectoryRouter.get("/", auth_1.auth, async (req, res) => {
                 required: true, // Ensures only Jobs with JobSkills are returned
                 attributes: ["industry_name"], // Fetch the skill_name
             },
+            {
+                model: User_1.default,
+                required: false, // Ensures only Jobs with JobSkills are returned
+                attributes: ["first_name", "last_name", "image"], // Fetch the skill_name
+            },
         ],
         order: [["id", "DESC"]],
         where: { status: "active" },
