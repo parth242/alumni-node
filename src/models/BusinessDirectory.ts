@@ -1,5 +1,5 @@
 import { DataTypes, Model, Sequelize } from "sequelize";
-import Industries from "./Industry";
+
 
 class BusinessDirectorys extends Model {
 	public id!: number;
@@ -22,7 +22,7 @@ class BusinessDirectorys extends Model {
 	public social_linkedin!: string;
 	public social_twitter!: string;
 	public social_youtube!: string;
-	member_ids!: string;
+	public member_ids!: string;
 	public services!: string;
 	public products!: string;
 	public readonly created_on!: Date;
@@ -158,10 +158,7 @@ export function initializeBusinessDirectoryModel(sequelize: Sequelize) {
 				modelName: "business_directorys",
 			},
 		);
-		BusinessDirectorys.belongsTo(Industries, {
-			foreignKey: "industry_id",
-			targetKey: "id",
-		});
+		
 		isUserModelInitialized = true;
 	}
 }

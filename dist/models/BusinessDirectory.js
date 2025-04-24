@@ -1,11 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.initializeBusinessDirectoryModel = initializeBusinessDirectoryModel;
 const sequelize_1 = require("sequelize");
-const Industry_1 = __importDefault(require("./Industry"));
 class BusinessDirectorys extends sequelize_1.Model {
 }
 let isUserModelInitialized = false;
@@ -132,10 +128,6 @@ function initializeBusinessDirectoryModel(sequelize) {
             timestamps: true,
             sequelize,
             modelName: "business_directorys",
-        });
-        BusinessDirectorys.belongsTo(Industry_1.default, {
-            foreignKey: "industry_id",
-            targetKey: "id",
         });
         isUserModelInitialized = true;
     }
